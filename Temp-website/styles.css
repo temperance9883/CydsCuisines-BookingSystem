@@ -1,0 +1,128 @@
+body
+    {
+    background: rgb(185, 135, 49);
+    
+    /* I want my default color of my text to be white unless I suggest otherwise later */
+    color: white;
+
+    /* I placed a bunch of different fonts to make sure that every computer can access a font style */
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    text-align: center;
+       
+    /* Default margin unless changed down below */
+    margin: 0;
+    }
+body, h1, h2, h3, h4, h5, h6 
+    {
+    font-family: Arial, Helvetica, sans-serif;
+    } 
+header
+    {
+        background: black;
+        color: rgb(195, 195, 202);
+        opacity: .5;
+        /* This is to add and remove spacing  */
+        margin: 20px 40px;
+        padding: 20px 40px 100px 30px;
+        text-align: center;
+    }
+section .logo a
+    {
+        background-image: url("images/Cyd\'s\ photo\ 1.png");
+        background-size: 185px;
+        background-repeat: no-repeat;
+        display: inline-block;
+        margin: auto;
+        padding: auto;
+        height: 150px;
+        text-indent: -9999999px;
+        position: relative;
+        top: -40px;
+        width: 145px;
+    }
+h1
+    {
+        background: black;
+        color: rgb(195, 195, 202);
+        opacity: .5;
+        margin: 20;
+        text-align: center;
+    }
+
+h2
+    {
+        color: rgb(226, 219, 203);
+        text-align: center;
+    }
+
+button
+    {
+        background-color: black;
+        border: none;
+        color: white;
+        text-align: center;
+        font-size: 16px;
+        /* This is how to round the corners on the button */
+        border-radius: 12px;
+    }
+nav
+    {
+        background: black;
+        color: rgb(226, 219, 203);
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+    }
+ul
+    {
+        margin: 20px;
+        padding: 20px 20px 20px 20px;
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+    }
+li
+    {
+        display: flex;
+        flex-direction: row;
+        margin-right: 20px;
+        /* display: flex;
+        flex-direction: row; */
+    }
+ol
+    {
+        margin: 0;
+        padding: 0;
+            
+    }
+section a
+    {
+        background: white;
+        color: blue;
+        padding: 20px 20px 20px 20px;
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+    }
+section
+    {
+        background: brown;
+        color: white;
+        padding: 20px 20px 20px 20px;
+        display: flex;
+        flex-direction: row;
+        text-align: center; 
+    }
+.container
+    {
+        margin: auto;
+        width: 92%;
+        height:100%;
+        border: 2px solid beige;
+    }
+footer
+    {
+        background: rgb(24, 89, 8);
+        color: black;
+        padding: 10px 20px;
+    }
