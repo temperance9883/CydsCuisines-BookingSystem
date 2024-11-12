@@ -121,8 +121,6 @@ section a:hover
     background: #D7A676;
     color: #FAF3E3;
 }
-
-/* New support page form styling */
 form 
 {
     display: flex;
@@ -160,8 +158,6 @@ form button:hover
     background-color: #D7A676;
     color: #FAF3E3;
 }
-
-/* Login page form styling */
 form 
 {
     display: flex;
@@ -173,7 +169,6 @@ form
     width: 80%;
     margin: 20px auto;
 }
-
 form input, form textarea 
 {
     padding: 10px;
@@ -182,7 +177,6 @@ form input, form textarea
     border-radius: 5px;
     font-size: 16px;
 }
-
 form button 
 {
     background-color: #FAF3E3;
@@ -193,25 +187,23 @@ form button
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
 form button:hover 
 {
     background-color: #D7A676;
     color: #FAF3E3;
 }
-
-.article a {
+.article a 
+{
     color: #A9B7A0;
     text-decoration: none;
     font-size: 1em;
     transition: color 0.3s ease;
 }
-
-.article a:hover {
+.article a:hover 
+{
     color: #D7A676;
     text-decoration: underline;
 }
-
 .container 
 {
     margin: auto;
