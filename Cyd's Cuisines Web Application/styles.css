@@ -45,32 +45,6 @@ h2
         font-family: Jacques Francois;
         font-size: x-large;
     }
-ul
-    {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-    }
-li
-    {
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        font-size: 24;
-    }
-
-section
-    {
-        margin: 75px;
-        background: beige;
-        color: white;
-        padding: 100px 100px 100px 100px;
-        display: grid;
-        flex-direction: column;
-        font-size: 48;
-    }
-
-
 button
     {
         background: #FAF3E3;
@@ -81,14 +55,28 @@ button
         /* This is how to round the corners on the button */
         border-radius: 12px;
     }
-nav
+nav 
     {
         background: #FAF3E3;
         color: #D7A676;
-        text-align: center;
-        display: flex;
-        flex-direction: row;
+        text-align: center; 
+        padding: 10px 0; 
+        margin: 0;
+        display: block; 
+        width: 100%; 
     }
+nav a 
+    {
+        display: inline-block; /* Treat links as blocks for better control */
+        padding: 10px 20px; /* Adjust padding around the links */
+        color: #D7A676;
+        text-decoration: none; /* Remove underline from links */
+    }
+nav a:hover 
+    {
+        background-color: #D7A676;
+        color: #FAF3E3;
+    }    
 ul
     {
         margin: 20px;
@@ -108,27 +96,37 @@ li
 ol
     {
         margin: 0;
-        padding: 0;
-            
+        padding: 0;           
     }
-section a
+section 
     {
         background: #A9B7A0;
         color: #FAF3E3;
-        padding: 20px 20px 20px 20px;
-        display: flex;
-        flex-direction: row;
-        text-align: center;
+        padding: 20px;
+        display: block;
+        flex-direction: column; 
+        align-items: center; 
+        gap: 10px;
     }
-section
+section a 
     {
-        background: #A9B7A0;
-        color: white;
-        padding: 20px 20px 20px 20px;
-        display: flex;
-        flex-direction: row;
-        text-align: center; 
+        background-color: #FAF3E3; 
+        color: #A9B7A0;
+        padding: 15px 20px;
+        display: block;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        text-decoration: none;
+        border-radius: 15px; 
+        transition: background-color 0.3s ease; 
     }
+section a:hover 
+    {
+        background: #D7A676;
+        color: #FAF3E3;
+    }
+    
 .container
     {
         margin: auto;
