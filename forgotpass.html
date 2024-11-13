@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forgot Password</title>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <style>
+        body 
+            {
+            font-family: Jacques Francois;
+            background-color: #fdfcf7;
+            background-image:linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('./Photos/background1.jpg');
+            background-size: 300%;
+            color: #A9B7A0; 
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            }
+        header h1 
+            {
+            color: #d4af37;
+            font-size: 2.5em;
+            margin-bottom: 0.1em;
+            }
+        header h2 
+            {
+            color: #d4af37;
+            font-size: 1.7em;
+            margin-top: 0;
+            }
+        section 
+            {
+            background-color: #ffe9c8;
+            padding: 2em;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500PX;
+            }
+        section h3 
+            {
+            color: #A9B7A0;
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            }
+        form
+            {
+            background-color: #ffe9c8;
+            }
+        form input[type="text"], form input[type="password"] 
+            {
+            width: 90%;
+            padding: 0.8em;
+            margin: 0.5em 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: #ffffff;
+            }
+        button[type="submit"] 
+            {
+            background-color: #d4af37;
+            color: #fff;
+            padding: 0.8em;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            width: 96%;
+            margin-top: 1em;
+            align-items: center;
+            }
+        button[type="submit"]:hover 
+            {
+            background-color: #c39e2e; 
+            }
+        .login-options 
+            {
+            margin-top: 1em;
+            }
+        .login-options a 
+            {
+            display: inline-block;
+            background-color: #d4af37;
+            color: #fff;
+            padding: 0.8em;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            width: 90%;
+            margin-top: 1em;
+            }
+        .login-options a:hover 
+            {
+            background-color: #c39e2e;
+            text-decoration: none;
+            }
+        footer 
+            {
+            margin-top: 1em;
+            font-size: 0.9em;
+            color: #7f7f7f;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Password Recovery</h1>
+    </header>
+    
+    <section>
+        <h3>Reset Your Password</h3>
+        <p style="color: #A9B7A0">Please enter your email address. We will send you instructions to reset your password.</p>
+        <form action="/submit-forgot-password" method="POST">
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+            <button type="submit">Send Reset Link</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>© 2024 Cyd's Cuisines. All rights reserved.</p>
+    </footer>
+</body>
+</html>
