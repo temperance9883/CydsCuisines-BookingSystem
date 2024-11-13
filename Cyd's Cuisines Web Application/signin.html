@@ -58,12 +58,12 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 1em;
-            background-color: #ffffff; /* White background for fields */
+            background-color: #ffffff;
             }
         button[type="submit"] 
             {
-            background-color: #d4af37; /* Gold */
-            color: #fff;
+            background-color: #d4af37;
+            color: white;
             padding: 0.8em;
             border: none;
             border-radius: 8px;
@@ -72,10 +72,14 @@
             width: 96%;
             margin-top: 1em;
             align-items: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            opacity: 35%;
             }
         button[type="submit"]:hover 
             {
-            background-color: #c39e2e; 
+            background-color: #c39e2e;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 35%;
             }
         .login-options 
             {
