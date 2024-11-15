@@ -1,50 +1,288 @@
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Bid Management</title>
-        <link rel="stylesheet" href="styles.css" type="text/css">
-    </head>
-    <body>
-        <header>
-            <h1>Cyd's Cuisines</h1>
-            <h2>Booking Management Site</h2>
-            <nav>
-                <ul>
-                    <li><a href="home.html">Home</a></li>
-                    <li><a href="client.html">Client Management</a></li>
-                    <li><a href="calendar.html">Event Calendar</a></li>
-                    <li><a href="bids.html">Bid Management</a></li>
-                    <li><a href="support.html">Support</a></li>  
-                </ul> 
-            </nav>
-        </header>
-        <section>
-            <div class="container">
-                <h3>Service Type</h3>
-                <form>
-                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
-                    <label for="vehicle1"> I have a bike</label><br>
-                    <input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
-                    <label for="vehicle2"> I have a car</label><br>
-                    <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
-                    <label for="vehicle3"> I have a boat</label>
-                </form>
-            </div>
-            <div class="container">
-                <h3>Cost Calculations</h3>
-                
-            </div>
-            <div class="container">
-                <h3>Price Breakdown</h3>
-                
-            </div>
-        </section>
-        <footer>
-            <p>© 2024 Cyd's Cuisines. All rights reserved.</p>
-        </footer> 
-    </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bids Dashboard</title>
+<style>
+  /* Basic Reset */
+ * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Jacques Francois;
+    background-color: #fdfcf7;
+    color: #A9B7A0;
     
+  }
+
+  body 
+  {
+    font-family: Jacques Francois;
+    background-color: #A9B7A0;;
+    color: white;
+  }
+  header 
+{
+    background: #FAF3E3;
+    color: #D7A676;
+    /* This is to add and remove spacing  */
+    margin: 20px 40px;
+    padding: 20px 40px 100px 30px;
+    text-align: center;
+}
+
+h1 
+{
+    background: #FAF3E3;
+    color: #D7A676;
+    margin: 20;
+    text-align: center;
+    font-family: Jacques Francois;
+    font-size: xx-large;
+}
+
+h2 
+{
+    background: #FAF3E3;
+    color: #D7A676;
+    text-align: center;
+    font-family: Jacques Francois;
+    font-size: x-large;
+}
+
+nav 
+{
+    background: #FAF3E3;
+    color: #D7A676;
+    text-align: center; 
+
+    padding: 10px 0; 
+    margin: 0;
+    display: block; 
+    width: 100%; 
+}
+nav a 
+{
+    display: inline-block; /* Treat links as blocks for better control */
+    padding: 10px 20px; /* Adjust padding around the links */
+    color: #D7A676;
+    text-decoration: none; /* Remove underline from links */
+}
+nav a:hover 
+{
+    background-color: #D7A676;
+    color: #FAF3E3;
+}  
+ul 
+{
+    margin: 20px;
+    padding: 20px 20px 20px 20px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+}
+li 
+{
+    display: flex;
+    flex-direction: row;
+    margin-right: 20px;
+}
+ol 
+{
+    margin: 0;
+    padding: 0;           
+}
+  /* Container for Dashboard */
+  .dashboard-container 
+  {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .bid-section 
+  {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bid-table
+  {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .bid-table th, .bid-table td
+  {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .bid-table th
+  {
+    background-color: #f4f4f9;
+    color: #555;
+  }
+
+  .bid-table tr:hover
+  {
+    background-color: #f1f1f1;
+  }
+
+  */
+</style>
+</head>
+<body>
+    <header>
+        <h1>Cyd's Cuisines</h1>
+        <h2>Booking Management Site</h2>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="client.html">Client Management</a></li>
+                <li><a href="calendar.html">Event Calendar</a></li>
+                <li><a href="bids.html">Bid Management</a></li>
+                <li><a href="support.html">Support</a></li>  
+            </ul> 
+        </nav>
+    </header>
+
+<div class="dashboard-container">
+  <!-- Catering Bids Section -->
+  <div class="bid-section">
+    <table class="bid-table">
+      <thead>
+        <tr>
+          <th>Assign Client</th>
+          <th>Miles</th>
+          <th>Service Fee</th>
+          <th>Estimated Groceries</th>
+          <th>Clean Up Fee</th>
+          <th>Decoration Fee</th>
+          <th>Bid Status</th>
+          <th>Estimated Bid Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>001</td>
+          <td>11</td>
+          <td>150</td>
+          <td>350</td>
+          <td>30</td>
+          <td>60</td>
+          <td>Pending</td>
+          <td>500</td>
+          <td>Contract</td>
+        </tr>
+        <tr>
+            <td>001</td>
+            <td>11</td>
+            <td>150</td>
+            <td>350</td>
+            <td>30</td>
+            <td>60</td>
+            <td>Pending</td>
+            <td>500</td>
+            <td>Contract</td>
+        </tr>
+        <tr>
+            <td>001</td>
+            <td>11</td>
+            <td>150</td>
+            <td>350</td>
+            <td>30</td>
+            <td>60</td>
+            <td>Pending</td>
+            <td>500</td>
+            <td>Contract</td>
+        </tr>
+        <tr>
+            <td>001</td>
+            <td>11</td>
+            <td>150</td>
+            <td>350</td>
+            <td>30</td>
+            <td>60</td>
+            <td>Pending</td>
+            <td>500</td>
+            <td>Contract</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="dashboard-container">
+    <!-- Meal Prep Section -->
+    <div class="bid-section">
+      <h2></h2>
+      <table class="bid-table">
+        <thead>
+          <tr>
+            <th>Assign Client</th>
+          <th>Miles</th>
+          <th>Service Fee</th>
+          <th>Estimated Groceries</th>
+          <th>Supplies Fee</th>
+          <th>Bid Status</th>
+          <th>Estimated Bid Price</th>
+          <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>001</td>
+          <td>11</td>
+          <td>150</td>
+          <td>350</td>
+          <td>10</td>
+          <td>Pending</td>
+          <td>500</td>
+          <td>Contract</td>
+          </tr>
+          <tr>
+            <td>001</td>
+          <td>11</td>
+          <td>150</td>
+          <td>350</td>
+          <td>10</td>
+          <td>Pending</td>
+          <td>500</td>
+          <td>Contract</td>
+          </tr>
+          <tr>
+            <td>001</td>
+          <td>11</td>
+          <td>150</td>
+          <td>350</td>
+          <td>10</td>
+          <td>Pending</td>
+          <td>500</td>
+          <td>Contract</td>
+          </tr>
+          <tr>
+            <td>001</td>
+          <td>11</td>
+          <td>150</td>
+          <td>350</td>
+          <td>10</td>
+          <td>Pending</td>
+          <td>500</td>
+          <td>Contract</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
 </html>
