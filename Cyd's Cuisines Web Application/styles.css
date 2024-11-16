@@ -21,7 +21,7 @@ header
     color: #D7A676;
     /* This is to add and remove spacing  */
     margin: 20px 40px;
-    padding: 20px 40px 100px 30px;
+    /* padding: 20px 40px 100px 30px; */
     text-align: center;
 }
 h1 
