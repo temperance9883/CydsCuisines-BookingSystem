@@ -1,0 +1,430 @@
+*{
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+width: 100%;
+font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+background-color: white;
+}
+*/
+body 
+{
+background: white;
+color: #D7A676;
+text-align: center;
+margin: 0;
+padding: 0;
+background-image:url('./Photos/goldflower.avif');
+background-repeat: no-repeat;
+background-size: 100%;
+
+}
+body, h1, h2, h3, h4, h5, h6 
+{
+font-family: Jacques Francois;
+font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+} 
+header
+{
+text-align: center;
+width: 100%;
+font-weight: normal;
+background-color: black;
+color: white;
+font-weight: normal;
+}
+header h1 
+{
+background-color: black;
+color: #DDC8A6;
+font-weight: normal;
+}
+header h2 
+{
+background-color: black;
+color: white;
+font-weight: normal;
+}
+nav 
+{
+position: relative;
+background-color: white;
+color: black;
+text-align: center; 
+padding: 0;
+margin: 0;
+display: flex; 
+justify-content: center; 
+align-items: center; 
+width: 100%; 
+height: 80px; 
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+nav a 
+{
+display: inline-block; 
+padding: 10px 20px; 
+color: black;
+text-decoration: none;
+font-size: 16px; 
+font-weight: bold; 
+transition: background-color 0.3s ease, color 0.3s ease; 
+}
+nav a:hover 
+{
+background-color: white; 
+color: #DDC8A6;
+border-radius: 5px; 
+} 
+ul 
+{
+margin: 0;
+padding: 0;
+list-style-type: none;
+display: flex;
+flex-direction: row;
+}
+li 
+{
+display: flex;
+flex-direction: row;
+}
+section 
+{
+background: white;
+color: black;
+padding: 20px;
+display: block;
+flex-direction: column; 
+align-items: center; 
+gap: 10px;
+display: flex; 
+justify-content: center; 
+align-items: center; 
+}
+section a 
+{
+background-color: #FAF3E3; 
+color: black;
+padding: 15px 20px;
+display: block;
+justify-content: center;
+align-items: center;
+width: 100%;
+text-decoration: none;
+border-radius: 15px; 
+transition: background-color 0.3s ease; 
+}
+section a:hover 
+{
+background: #D7A676;
+color: #FAF3E3;
+}
+
+/* Home page carousel */
+.carousel-section 
+{
+background-color: black;
+width: 100%;
+max-width: 1000px;
+margin: 2em auto;
+overflow: hidden;
+border-radius: 10px;
+box-shadow: 0 12px 12px rgba(0, 0, 0, 0.2);
+}
+.carousel 
+{
+display: flex;
+transition: transform 1s ease-in-out;
+width: 100%;
+}
+.carousel img 
+{
+width: 80%;            
+height: 350px;           
+object-fit: cover;  
+}
+.home-quote
+{
+padding: 12px;
+border-bottom: 1px solid white;
+text-align: center;
+background-image:url('./Photos/goldpaper.jpg');
+border-radius: 10px;
+}
+
+/* Sign in page user name and password */
+form 
+{
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding: 20px;
+background-color: #D7A676;
+border-radius: 8px;
+width: 80%;
+margin: 20px auto;
+}
+form input, form textarea 
+{
+padding: 10px;
+margin: 5px 0;
+border: 1px solid #D7A676;
+border-radius: 5px;
+font-size: 16px;
+}
+form button 
+{
+background-color: #FAF3E3;
+color: #D7A676;
+padding: 10px 15px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+form button:hover 
+{
+background-color: #D7A676;
+color: #FAF3E3;
+}
+form 
+{
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding: 20px;
+background-color: #D7A676;
+border-radius: 8px;
+width: 80%;
+margin: 20px auto;
+}
+form input, form textarea 
+{
+padding: 10px;
+margin: 5px 0;
+border: 1px solid #D7A676;
+border-radius: 5px;
+font-size: 16px;
+}
+form button 
+{
+background-color: #FAF3E3;
+color: #D7A676;
+padding: 10px 15px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+form button:hover 
+{
+background-color: #D7A676;
+color: #FAF3E3;
+}
+
+/* Support page */
+h3
+{
+    color: black;
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.3s ease;
+    text-align: center;  
+}
+.article 
+{
+color: black;
+text-decoration: none;
+font-size: 1em;
+transition: color 0.3s ease;
+text-align: center;
+}
+
+.bid-section 
+{
+flex: 1;
+background-color: white;
+padding: 20px;
+border-radius: 8px;
+}
+.bid-table
+{
+width: 100%;
+border-collapse: collapse;
+background-color: #DDC8A6;
+}
+.bid-table th, .bid-table td
+{
+padding: 12px;
+border-bottom: 1px solid white;
+text-align: left;
+}
+.bid-table th
+{
+background-color:#666;
+color: white;
+}
+.bid-table tr:hover
+{
+ background-color: #DDC8A6;
+color: #DDC8A6;
+}
+#add-btn 
+{
+background-color: black;
+color: #DDC8A6;
+border: none;
+padding: 10px 20px;
+border-radius: 10px;
+cursor: pointer;
+font-size: 16px;
+margin: 10px;
+}
+#add-btn:hover 
+{
+background-color: #DDC8A6;
+color: black;
+}
+
+.calendar
+{
+background-image:url('./Photos/goldflower.avif');
+background-repeat: no-repeat;
+background-position: top-center;
+background-size: 100% 700px;
+border-radius: 10px;
+box-shadow: 0 0 30px #222222;
+overflow: hidden;
+width: 700px;
+height: 700px;
+padding: 50px 20px;
+}
+.header
+{
+border-radius: 10px;
+border: black;
+display:flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px 20px;
+}
+.btn
+{
+cursor: pointer;
+display:flex;
+justify-content: space-between;
+align-items: center;
+
+}
+#month-year
+{
+font-weight: bold;
+font-size: 20px;
+text-align: center;
+}
+.weekdays, .days
+{
+display: flex;
+flex-wrap: wrap;
+}
+.days
+{
+min-height: 240;
+}
+.weekdays div, .days div
+{
+width: 14.28%;
+text-align: center;
+padding: 10px 0;
+border-radius: 5px;
+}
+.days div
+{
+cursor: pointer;
+transition: background-color 0.3s;
+height: 100px;
+width: 90px;
+}
+.days .today
+{
+background-color: #DDC8A6;
+color: white;
+opacity: 75%;
+}
+.days .fade
+{
+color: #DDC8A6;
+}
+.days div:hover 
+{
+background-color: #494949;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.dashboard-container 
+{
+background-image:url('./Photos/goldflower.avif');
+display: flex;
+gap: 20px;
+padding: 20px;
+}
+.customer-section 
+{
+flex: 1;
+background-color: white;
+padding: 10px;
+border-radius: 8px;
+}
+.customer-table
+{
+width: 100%;
+border-collapse: collapse;
+background-image:linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('./Photos/goldflower.avif');
+}
+.customer-table th, .customer-table td
+{
+padding: 12px;
+border-bottom: 1px solid black;
+justify-content: space-between;
+align-items: center;
+text-align: center;
+margin: 20px;
+}
+.customer-table th
+{
+    background-color:#666;
+    color: white;
+}
+.customer-table tr:hover
+{
+background-color: black;
+}
+#add-client-btn 
+{
+background-color: black;
+color: #DDC8A6;
+border: none;
+padding: 10px 10px;
+border-radius: 5px;
+cursor:pointer;
+font-size: 16px;
+margin: 20px;
+float: right; 
+font-weight: bolder;
+}
+#add-client-btn:hover 
+{
+background-color: #DDC8A6;
+color: black;
+text-decoration: none;
+}
+footer 
+{
+margin-top: 17em;
+padding: 1em;
+text-align: center;
+width: 100%;
+color: #666;
+}

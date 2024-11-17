@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cyd's Cuisines</title>
+        <link rel="stylesheet" href="styles.css" type="text/css">
+        <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <header>
+            <h1>Cyd's Cuisines</h1>
+            <h2>Booking Management Site</h2>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="client.html">Client Management</a></li>
+                <li><a href="calendar.html">Event Calendar</a></li>
+                <li><a href="bids.html">Bid Management</a></li>
+                <li><a href="support.html">Support</a></li>  
+            </ul> 
+        </nav>
+
+        
+
+        <section class="carousel-section">
+                <div class="carousel">
+                    <img src="./Photos/Cyd's photo.png" alt="Event Setup 3">
+                    <img src="./Photos/Cyd'sphoto.png" alt="Event Setup 4">
+
+                </div>
+        </section>
+        
+        <section>
+            <h1 class="home-quote">
+                "Your personalized hub for seamless bookings and perfect events - all in one place."
+            </h1>
+        </section>
+        <footer>
+            <p>© 2024 Cyd's Cuisines. All rights reserved.</p>
+        </footer>
+        <script>
+            const carousel = document.querySelector('.carousel');
+        let index = 0;
+        const totalImages = carousel.children.length;
+
+        function showNextImage() 
+        {
+            index = (index + 1) % totalImages;
+            carousel.style.transform = `translateX(-${index * 75}%)`;
+        }
+
+        setInterval(showNextImage, 10000); // Switch image every 10 seconds
+        </script>
+  </body>    
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Client Management</title>
+        <link rel="stylesheet" href="styles.css" type="text/css">
+        
+    </head>
+    <body>
+        <header>
+            <h1>Cyd's Cuisines</h1>
+            <h2>Booking Management Site</h2>
+            <nav>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="client.html">Client Management</a></li>
+                    <li><a href="calendar.html">Event Calendar</a></li>
+                    <li><a href="bids.html">Bid Management</a></li>
+                    <li><a href="support.html">Support</a></li>  
+                </ul> 
+            </nav>
+        </header>
+
+        <button id="add-client-btn" onclick="openAddClientForm()">
+          Add New Client
+        </button>
+
+        <div class="dashboard-container">
+            <div class="customer-section">
+              <table class="customer-table">
+                <thead>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>001</td>
+                    <td>Jane Doe</td>
+                    <td>001</td>
+                    <td>jane.doe@example.com</td>
+                  </tr>
+                  <tr>
+                    <td>002</td>
+                    <td>John Smith</td>
+                    <td>002</td>
+                    <td>john.smith@example.com</td>
+                  </tr>
+                  <tr>
+                    <td>003</td>
+                    <td>Emily Johnson</td>
+                    <td>002</td>
+                    <td>emily.j@example.com</td>
+                  </tr>
+                  <tr>
+                    <td>010</td>
+                    <td>Chris Taylor</td>
+                    <td>002</td>
+                    <td>chris.t@example.com</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <script>
+            function openAddClientForm() 
+            {
+              alert("This will open a form to add a new client!");
+            }
+          </script>
+        <footer>
+            <p>© 2024 Cyd's Cuisines. All rights reserved.</p>
+        </footer>
+    </body>
+    
+</html>
