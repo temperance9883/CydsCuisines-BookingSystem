@@ -60,7 +60,6 @@ export default function LoginPage({ onLogin }) {
         {errorMessage && (
           <div className="text-red-500 mb-4">{errorMessage}</div>
         )}
-
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
           <input
             type="text"
