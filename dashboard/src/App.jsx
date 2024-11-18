@@ -1,66 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Routes,
   Route,
-  BrowserRouter as Router,
   Navigate,
+  useNavigate, // Import useNavigate hook
 } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import Customers from "./components/Customers";
 import Navbar from "./components/Navbar";
 import BidComponent from "./components/Bids";
 import Booking from "./components/Booking";
+import Home from "./components/Home";
+import Support from "./components/Support";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate(); // Get the navigate function from useNavigate
 
-  // Handle successful login
   const handleLogin = () => {
-    setIsAuthenticated(true); // Set user as authenticated
+    setIsAuthenticated(true); // User successfully logged in
   };
 
-  // Handle logout
   const handleLogout = () => {
-    setIsAuthenticated(false); // Reset authentication state
+    setIsAuthenticated(false); // User logged out
+    navigate("/"); // Navigate to the login page after logout
   };
 
   return (
-    <Router>
-      <div>
-        {/* Always render the Navbar, passing the auth status and logout handler */}
+    <div>
+      {/* Render Navbar only if authenticated and NOT on Home page */}
+      {isAuthenticated && (
         <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+      )}
 
-        <Routes>
-          {/* If not authenticated, show login page */}
-          <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+      {/* Define Routes */}
+      <Routes>
+        {/* Login Route */}
+        <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
 
-          {/* If authenticated, show Customers */}
-          <Route
-            path="/customers"
-            element={
-              isAuthenticated ? (
-                <Customers /> // Customers page
-              ) : (
-                <Navigate to="/" /> // Redirect to login if not authenticated
-              )
-            }
-          />
+        {/* Protected Routes */}
+        <Route
+          path="/home"
+          element={isAuthenticated ? <Home /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/customers"
+          element={isAuthenticated ? <Customers /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/bids"
+          element={isAuthenticated ? <BidComponent /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/booking"
+          element={isAuthenticated ? <Booking /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/support"
+          element={isAuthenticated ? <Support /> : <Navigate to="/" />}
+        />
 
-          {/* Add other authenticated routes */}
-          <Route
-            path="/bids"
-            element={isAuthenticated ? <BidComponent /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/booking"
-            element={isAuthenticated ? <Booking /> : <Navigate to="/" />}
-          />
-
-          {/* Catch-all route to redirect to /customers */}
-          <Route path="*" element={<Navigate to="/customers" />} />
-        </Routes>
-      </div>
-    </Router>
+        {/* Catch-all route to redirect to /home if route doesn't exist */}
+        <Route path="*" element={<Navigate to="/home" />} />
+      </Routes>
+    </div>
   );
 }
 

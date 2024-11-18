@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -6,10 +6,10 @@ export default function LoginPage({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
     const loginData = { username, password };
 
@@ -25,11 +25,11 @@ export default function LoginPage({ onLogin }) {
       const data = await response.json();
 
       if (response.ok) {
-        console.log(data.message); // Log success message
-        onLogin(); // Update the parent state to authenticated
-        navigate("/customers"); // Redirect to the customers page
+        console.log(data.message);
+        onLogin();
+        navigate("/home");
       } else {
-        setErrorMessage(data.message); // Show error message if login fails
+        setErrorMessage(data.message);
       }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again.");
@@ -39,27 +39,27 @@ export default function LoginPage({ onLogin }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center bg-[#fdfcf7] bg-cover bg-no-repeat"
+      className="h-screen w-full flex flex-col items-center justify-center bg-[#fdfcf7] bg-cover bg-no-repeat"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('./Photos/background1.jpg')",
+          "linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('/goldflower.avif')",
       }}
     >
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-[#d4af37] mb-2">
-          Cyd's Cuisines
-        </h1>
-        <h2 className="text-2xl text-[#d4af37]">Booking Management Site</h2>
+      {/* Header at the top */}
+      <header className="text-center mb-10 flex flex-col bg-black w-full px-8 max-w-screen-xl mx-auto fixed top-0 left-0 right-0 z-10">
+        <h1 className="text-[#d4af37] text-4xl mb-2">Cyd's Cuisines</h1>
+        <h2 className="text-[#d4af37] text-2xl">Booking Management Site</h2>
       </header>
 
-      <section className="bg-[#ffefe1] p-8 rounded-md shadow-md text-center max-w-md w-full">
-        <h3 className="text-[#A9B7A0] text-xl mb-4">
+      <section className="bg-white p-8 rounded-md shadow-md text-center max-w-md w-full">
+        <h3 className="text-black text-xl mb-4">
           Welcome back! Please log in to continue
         </h3>
 
         {errorMessage && (
           <div className="text-red-500 mb-4">{errorMessage}</div>
         )}
+
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
           <input
             type="text"
@@ -83,23 +83,17 @@ export default function LoginPage({ onLogin }) {
           />
           <button
             type="submit"
-            className="w-4/5 bg-[#d4af37] text-white p-2 rounded-md hover:bg-[#c39e2e] transition duration-300"
+            className="w-4/5 bg-black text-[#DDC8A6] p-2 rounded-md hover:bg-[#DDC8A6] hover:text-black transition duration-300"
           >
             Login
           </button>
 
-          <div className="flex mt-4 space-y-2">
+          <div className="mt-4">
             <Link
               to="/forgotpass"
-              className="block w-4/5 bg-[#d4af37] text-white p-2 rounded-md text-center hover:bg-[#c39e2e] mr-10"
+              className="block w-4/5 bg-black text-[#DDC8A6] p-2 rounded-md text-center hover:bg-[#DDC8A6] hover:text-black transition duration-300"
             >
               Forgot Password?
-            </Link>
-            <Link
-              to="/createprofile"
-              className="block w-4/5 bg-[#d4af37] text-white p-2 rounded-md text-center hover:bg-[#c39e2e]"
-            >
-              Create A New Profile
             </Link>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import AddCustomerModal from "./AddCustomerModal";
 
 export default function Customers() {
@@ -14,9 +14,8 @@ export default function Customers() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingCustomerId, setEditingCustomerId] = useState(null);
-  const navigate = useNavigate(); // Use useNavigate
+  const navigate = useNavigate();
 
-  // Fetch customers data from your backend
   const fetchCustomers = async () => {
     setLoading(true);
     try {
@@ -39,11 +38,11 @@ export default function Customers() {
   };
 
   const handleAddOrUpdateCustomer = async (e) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     const url = editMode
       ? `http://localhost:5000/customers/${editingCustomerId}`
-      : "http://localhost:5000/customers"; // POST for new customers
-    const method = editMode ? "PUT" : "POST"; // PUT for editing, POST for adding
+      : "http://localhost:5000/customers";
+    const method = editMode ? "PUT" : "POST";
 
     try {
       const response = await fetch(url, {
@@ -61,18 +60,15 @@ export default function Customers() {
       const customerData = await response.json();
 
       if (editMode) {
-        // Update the customer in the state
         setCustomers((prevCustomers) =>
           prevCustomers.map((customer) =>
             customer.customer_id === editingCustomerId ? customerData : customer
           )
         );
       } else {
-        // Add the new customer to the state
         setCustomers((prevCustomers) => [...prevCustomers, customerData]);
       }
 
-      // Optionally refetch customers after adding/updating
       await fetchCustomers();
 
       resetNewCustomer();
@@ -84,7 +80,6 @@ export default function Customers() {
     }
   };
 
-  // Open and close modal functions
   const openModal = (customer = null) => {
     if (customer) {
       setEditMode(true);
@@ -116,7 +111,6 @@ export default function Customers() {
     });
   };
 
-  // Delete customer
   const handleDeleteCustomer = async (customerId) => {
     try {
       const response = await fetch(
@@ -132,7 +126,6 @@ export default function Customers() {
         return;
       }
 
-      // Optionally refetch customers after deletion to ensure data consistency
       await fetchCustomers();
     } catch (error) {
       setError(error.message);
@@ -152,83 +145,91 @@ export default function Customers() {
   }
 
   return (
-    <div className="p-5">
-      <h1 className="text-3xl font-bold text-red-700 mb-4">Customers</h1>
+    <div className="p-5 bg-[#fdfcf7]">
+      <div className="flex justify-center">
+        <button
+          onClick={() => openModal()}
+          className="bg-black text-white rounded-md p-2 mb-4 transition"
+        >
+          Add New Client
+        </button>
+      </div>
 
-      <button
-        onClick={() => openModal()}
-        className="bg-green-500 text-white rounded-md p-2 mb-4 hover:bg-green-600 transition duration-200"
-      >
-        Add Customer
-      </button>
+      {/* Wrapper div with background image */}
+      <div className="bg-[url('/goldflower.avif')] bg-cover backdrop-blur-sm bg-opacity-40 p-4 rounded-lg">
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse bg-white rounded-md">
+            <thead>
+              <tr className="bg-gray-200 text-gray-700">
+                <th className="py-2 px-4 border-b text-left">Customer ID</th>
+                <th className="py-2 px-4 border-b text-left">Name</th>
+                <th className="py-2 px-4 border-b text-left">Phone Number</th>
+                <th className="py-2 px-4 border-b text-left">Email Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((customer) => (
+                <tr
+                  key={customer.customer_id}
+                  onClick={() => openModal(customer)}
+                  className="cursor-pointer hover:bg-gray-100"
+                >
+                  <td className="py-2 px-4 border-b text-left">
+                    {customer.customer_id}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left">
+                    {customer.name}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left">
+                    {customer.phone_number}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left">
+                    {customer.email}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <ul className="mb-6">
-        {customers.map((customer) => (
-          <li key={customer.customer_id} className="mb-2">
-            <div className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
-              <div>
-                <strong>{customer.name}</strong>
-                <p>Email: {customer.email}</p>
-                <p>Phone: {customer.phone_number}</p>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => openModal(customer)} // Open modal for editing
-                  className="bg-yellow-500 text-white rounded-md p-2 hover:bg-yellow-600 transition duration-200"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteCustomer(customer.customer_id)} // Handle delete
-                  className="bg-red-500 text-white rounded-md p-2 hover:bg-red-600 transition duration-200"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => navigate("/booking")} // Pass customer ID
-                  className="bg-blue-500 text-white rounded-md p-2 hover:bg-blue-600 transition duration-200"
-                >
-                  Book Service
-                </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <footer className="text-center mt-20">
+        © 2024 Cyd's Cuisines. All rights reserved.
+      </footer>
 
-      {/* Modal for adding/updating customer */}
       <AddCustomerModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        onSubmit={handleAddOrUpdateCustomer} // Ensure the correct function is passed
+        onSubmit={handleAddOrUpdateCustomer}
+        onDelete={handleDeleteCustomer}
+        editMode={editMode}
       >
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={newCustomer.name}
-          onChange={handleInputChange} // Use the updated input change handler
-          required
-          className="border border-gray-300 rounded-md p-2 mb-2 w-full"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={newCustomer.email}
-          onChange={handleInputChange} // Use the updated input change handler
-          required
-          className="border border-gray-300 rounded-md p-2 mb-2 w-full"
-        />
-        <input
-          type="tel"
-          name="phone_number"
-          placeholder="Phone Number"
-          value={newCustomer.phone_number}
-          onChange={handleInputChange} // Use the updated input change handler
-          required
-          className="border border-gray-300 rounded-md p-2 mb-2 w-full"
-        />
+        <div className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            value={newCustomer.name}
+            onChange={handleInputChange}
+            placeholder="Name"
+            className="p-2 border rounded w-full"
+          />
+          <input
+            type="text"
+            name="phone_number"
+            value={newCustomer.phone_number}
+            onChange={handleInputChange}
+            placeholder="Phone Number"
+            className="p-2 border rounded w-full"
+          />
+          <input
+            type="email"
+            name="email"
+            value={newCustomer.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            className="p-2 border rounded w-full"
+          />
+        </div>
       </AddCustomerModal>
     </div>
   );

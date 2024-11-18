@@ -6,7 +6,9 @@ export default function MealPrepBidModal({ onClose, onSave }) {
   const [bidStatus, setBidStatus] = useState("");
   const [miles, setMiles] = useState("");
   const [serviceFee, setServiceFee] = useState("");
+  const [foods, setFoods] = useState("");
   const [estimatedGroceries, setEstimatedGroceries] = useState("");
+  const [estimatedBidPrice, setEstimatedBidPrice] = useState("");
   const [supplies, setSupplies] = useState("");
   const [bookingId, setBookingId] = useState("");
   const [customer, setCustomer] = useState("");
@@ -61,7 +63,9 @@ export default function MealPrepBidModal({ onClose, onSave }) {
       bid_status: bidStatus,
       miles: miles,
       service_fee: serviceFee,
+      foods: foods,
       estimated_groceries: estimatedGroceries,
+      estimated_bid_price: estimatedBidPrice,
       supplies: supplies,
       booking_id: bookingId,
     };
@@ -132,6 +136,16 @@ export default function MealPrepBidModal({ onClose, onSave }) {
             />
           </label>
           <label className="block mb-2">
+            Foods:
+            <input
+              type="text"
+              value={foods}
+              onChange={(e) => setFoods(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+            />
+          </label>
+          <label className="block mb-2">
             Miles:
             <input
               type="number"
@@ -152,6 +166,16 @@ export default function MealPrepBidModal({ onClose, onSave }) {
             />
           </label>
           <label className="block mb-2">
+            Supplies:
+            <input
+              type="text"
+              value={supplies}
+              onChange={(e) => setSupplies(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+            />
+          </label>
+          <label className="block mb-2">
             Estimated Groceries:
             <input
               type="number"
@@ -162,11 +186,11 @@ export default function MealPrepBidModal({ onClose, onSave }) {
             />
           </label>
           <label className="block mb-2">
-            Supplies:
+            Estimated Bid Price:
             <input
-              type="text"
-              value={supplies}
-              onChange={(e) => setSupplies(e.target.value)}
+              type="number"
+              value={estimatedBidPrice}
+              onChange={(e) => setEstimatedBidPrice(e.target.value)}
               required
               className="border border-gray-300 rounded-md p-2 w-full mt-1"
             />

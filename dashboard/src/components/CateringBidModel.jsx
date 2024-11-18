@@ -9,7 +9,9 @@ export default function CateringBidModal({ onClose, onSave }) {
   const [serviceFee, setServiceFee] = useState("");
   const [cleanUp, setCleanUp] = useState("");
   const [decorations, setDecorations] = useState("");
+  const [foods, setFoods] = useState("");
   const [estimatedGroceries, setEstimatedGroceries] = useState("");
+  const [estimatedBidPrice, setEstimatedBidPrice] = useState("");
   const [bookingId, setBookingId] = useState("");
   const [booking, setBooking] = useState([]); // Initialize booking as an empty array
   const [customers, setCustomers] = useState([]); // Added state for customers
@@ -54,6 +56,8 @@ export default function CateringBidModal({ onClose, onSave }) {
       decorations: decorations,
       estimated_groceries: estimatedGroceries,
       booking_id: bookingId,
+      foods,
+      estimated_bid_price,
     };
     onSave(newBid); // Call the save function passed from parent
     onClose(); // Close the modal after submission
@@ -74,7 +78,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             >
               <option value="">Select a Customer</option>
               {customers.map((customer) => (
@@ -90,7 +94,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             >
               <option value="">Select a Booking Event</option>
               {booking.map((item) => (
@@ -108,7 +112,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={createdAt}
               onChange={(e) => setCreatedAt(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -118,7 +122,17 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={bidStatus}
               onChange={(e) => setBidStatus(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
+            />
+          </label>
+          <label className="block mb-2">
+            Foods:
+            <input
+              type="text"
+              value={foods}
+              onChange={(e) => setFoods(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -128,7 +142,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={miles}
               onChange={(e) => setMiles(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -138,7 +152,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={serviceFee}
               onChange={(e) => setServiceFee(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -148,7 +162,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={cleanUp}
               onChange={(e) => setCleanUp(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -158,7 +172,7 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={decorations}
               onChange={(e) => setDecorations(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
           <label className="block mb-2">
@@ -168,13 +182,29 @@ export default function CateringBidModal({ onClose, onSave }) {
               value={estimatedGroceries}
               onChange={(e) => setEstimatedGroceries(e.target.value)}
               required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
-          <div className="flex justify-end">
+          <label className="block mb-2">
+            Estimated Bid Price:
+            <input
+              type="number"
+              value={estimatedBidPrice}
+              onChange={(e) => setEstimatedBidPrice(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
+            />
+          </label>
+          <div className="flex justify-center items-center">
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mr-5"
+            >
+              Calculate Bid Price
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mr-5"
             >
               Submit Bid
             </button>
