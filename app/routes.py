@@ -112,6 +112,8 @@ def get_catering_bids():
             'clean_up': str(bid.clean_up),
             'decorations': str(bid.decorations),
             'estimated_groceries': str(bid.estimated_groceries),
+            'foods': bid.foods,
+            'estimated_bid_price': str(bid.estimated_bid_price),
             'booking_id': bid.booking_id,
             'customer_id': bid.customer_id
         } for bid in catering_bids
@@ -248,7 +250,31 @@ def get_bookings():
         'service_type': b.service_type,  # Add service_type here
     } for b in bookings])
 
+# Fetch a booking by booking_id
+@main.route('/bookings/<int:booking_id>', methods=['GET'])
+def get_booking(booking_id):
+    # Find the booking with the specific booking_id
+    booking = Booking.query.get(booking_id)
 
+    # If booking is found, return it in JSON format
+    if booking:
+        return jsonify({
+            'booking_id': booking.booking_id,
+            'requested_date': booking.requested_date.isoformat(),
+            'event_location': booking.event_location,
+            'event_type': booking.event_type,
+            'customer_id': booking.customer_id,
+            'number_of_guests': booking.number_of_guests,
+            'bid_status': booking.bid_status,
+            'start_time': booking.start_time.isoformat() if booking.start_time else None,  
+            'end_time': booking.end_time.isoformat() if booking.end_time else None,
+            'service_type': booking.service_type,
+        })
+    else:
+        # If booking with the given id is not found
+        return jsonify({"error": "Booking not found"}), 404
+
+    
 @main.route('/bookings', methods=['POST'])
 def create_booking():
     data = request.json

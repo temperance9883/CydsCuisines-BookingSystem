@@ -126,6 +126,8 @@ class CateringBid(db.Model):
     clean_up = db.Column(db.BigInteger, nullable=True)
     decorations = db.Column(db.BigInteger, nullable=True)
     estimated_groceries = db.Column(db.BigInteger, nullable=True)
+    foods = db.Column(db.String)
+    estimated_bid_price = db.Column(db.BigInteger, nullable=True)
     booking_id = db.Column(db.BigInteger, db.ForeignKey('Bookings.booking_id'), nullable=False)
     customer_id = db.Column(db.BigInteger, primary_key=True)
    
