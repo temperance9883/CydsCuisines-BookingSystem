@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-export default function CateringBidModal({ onClose, onSave }) {
-  const [customer, setCustomer] = useState("");
+export default function CateringBidModal({ onClose, onSaveBid }) {
+  const [customer, setCustomer] = useState(""); // Stores selected customer ID
   const [cateringBidId, setCateringBidId] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [bidStatus, setBidStatus] = useState("");
@@ -13,15 +13,15 @@ export default function CateringBidModal({ onClose, onSave }) {
   const [estimatedGroceries, setEstimatedGroceries] = useState("");
   const [estimatedBidPrice, setEstimatedBidPrice] = useState("");
   const [bookingId, setBookingId] = useState("");
-  const [booking, setBooking] = useState([]); // Initialize booking as an empty array
-  const [customers, setCustomers] = useState([]); // Added state for customers
+  const [booking, setBooking] = useState([]);
+  const [customers, setCustomers] = useState([]); // State for customers
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/customers");
         const customersData = await response.json();
-        console.log("Customers fetched: ", customersData); // Debugging output
+        console.log("Customers fetched: ", customersData);
         setCustomers(customersData);
       } catch (error) {
         console.error("Error fetching customers:", error);
@@ -35,7 +35,7 @@ export default function CateringBidModal({ onClose, onSave }) {
       try {
         const response = await fetch("http://127.0.0.1:5000/bookings");
         const bookingData = await response.json();
-        console.log("Bookings fetched: ", bookingData); // Debugging output
+        console.log("Bookings fetched: ", bookingData);
         setBooking(bookingData);
       } catch (error) {
         console.error("Error fetching bookings:", error);
@@ -43,24 +43,64 @@ export default function CateringBidModal({ onClose, onSave }) {
     };
     fetchBookings();
   }, []);
-  const handleSubmit = (e) => {
+
+  const calculateBidPrice = () => {
+    // Miles calculation
+    const milesCharge = miles <= 10 ? 10 : 10 + (miles - 10);
+
+    // Catering-specific logic
+    const decorationCost = decorations ? 60 : 0;
+    const cleanUpCost = cleanUp ? 30 : 0;
+
+    const calculatedPrice =
+      parseInt(estimatedGroceries || 0, 10) +
+      decorationCost +
+      cleanUpCost +
+      parseInt(serviceFee || 0, 10) +
+      milesCharge;
+
+    setEstimatedBidPrice(calculatedPrice);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const newBid = {
       catering_bid_id: cateringBidId,
-      customer_id: customer, // Include customer ID in your bid data
-      created_at: createdAt,
+      customer_id: customer, // Customer ID from the dropdown
+      created_at: new Date().toISOString(), // Set current timestamp if needed
       bid_status: bidStatus,
-      miles: miles,
-      service_fee: serviceFee,
-      clean_up: cleanUp,
-      decorations: decorations,
-      estimated_groceries: estimatedGroceries,
-      booking_id: bookingId,
+      miles: parseInt(miles, 10),
+      service_fee: parseInt(serviceFee, 10),
+      clean_up: cleanUp, // Assuming dropdown or checkbox for Boolean
+      decorations: decorations, // Same assumption
+      estimated_groceries: parseInt(estimatedGroceries, 10),
       foods,
-      estimated_bid_price,
+      estimated_bid_price: parseInt(estimatedBidPrice, 10),
+      booking_id: bookingId, // Booking ID from the dropdown
     };
-    onSave(newBid); // Call the save function passed from parent
-    onClose(); // Close the modal after submission
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/catering_bids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newBid),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Bid saved:", data);
+        onSaveBid(data); // Optional: Pass saved bid to parent
+        onClose(); // Close modal
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save bid:", errorData);
+      }
+    } catch (error) {
+      console.error("Error during bid submission:", error);
+    }
   };
 
   return (
@@ -69,9 +109,10 @@ export default function CateringBidModal({ onClose, onSave }) {
         className="fixed inset-0 bg-black opacity-50"
         onClick={onClose}
       ></div>
-      <div className="bg-white rounded-lg shadow-lg p-6 z-10 w-1/3">
+      <div className="bg-white rounded-lg shadow-lg p-6 z-10 w-full max-w-2xl sm:w-11/12 md:w-1/3">
         <h2 className="text-xl font-semibold mb-4">Catering Bid</h2>
         <form onSubmit={handleSubmit}>
+          {/* Customer dropdown */}
           <label className="block mb-2">
             Customer:
             <select
@@ -88,6 +129,8 @@ export default function CateringBidModal({ onClose, onSave }) {
               ))}
             </select>
           </label>
+
+          {/* Booking event dropdown */}
           <label className="block mb-2">
             Booking Event:
             <select
@@ -104,37 +147,35 @@ export default function CateringBidModal({ onClose, onSave }) {
               ))}
             </select>
           </label>
-          {/* Other form fields */}
+
+          {/* Created At (auto-filled) */}
           <label className="block mb-2">
             Created At:
             <input
-              type="datetime-local"
-              value={createdAt}
-              onChange={(e) => setCreatedAt(e.target.value)}
-              required
-              className="border border-gray-300 rounded-md p-1 w-full mt-1"
+              type="text"
+              value={new Date().toISOString()} // Automatically set current timestamp
+              readOnly
+              className="border border-gray-300 rounded-md p-1 w-full mt-1 bg-gray-100 cursor-not-allowed"
             />
           </label>
+
+          {/* Bid Status dropdown */}
           <label className="block mb-2">
             Bid Status:
-            <input
-              type="text"
+            <select
               value={bidStatus}
               onChange={(e) => setBidStatus(e.target.value)}
               required
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
-            />
+            >
+              <option value="">Select Bid Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
           </label>
-          <label className="block mb-2">
-            Foods:
-            <input
-              type="text"
-              value={foods}
-              onChange={(e) => setFoods(e.target.value)}
-              required
-              className="border border-gray-300 rounded-md p-1 w-full mt-1"
-            />
-          </label>
+
+          {/* Miles input */}
           <label className="block mb-2">
             Miles:
             <input
@@ -145,6 +186,8 @@ export default function CateringBidModal({ onClose, onSave }) {
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
+
+          {/* Service Fee input */}
           <label className="block mb-2">
             Service Fee:
             <input
@@ -155,26 +198,41 @@ export default function CateringBidModal({ onClose, onSave }) {
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
+
+          {/* Clean Up checkbox */}
           <label className="block mb-2">
             Clean Up:
             <input
-              type="text"
-              value={cleanUp}
-              onChange={(e) => setCleanUp(e.target.value)}
+              type="number"
+              onChange={(e) => setCleanUp(e.target.checked)}
               required
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
+
+          {/* Decorations checkbox */}
           <label className="block mb-2">
             Decorations:
             <input
-              type="text"
-              value={decorations}
-              onChange={(e) => setDecorations(e.target.value)}
+              type="number"
+              onChange={(e) => setDecorations(e.target.checked)}
               required
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
+
+          {/* Foods input */}
+          <label className="block mb-2">
+            Foods:
+            <textarea
+              value={foods}
+              onChange={(e) => setFoods(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
+            ></textarea>
+          </label>
+
+          {/* Estimated Groceries input */}
           <label className="block mb-2">
             Estimated Groceries:
             <input
@@ -185,6 +243,8 @@ export default function CateringBidModal({ onClose, onSave }) {
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
+
+          {/* Estimated Bid Price input */}
           <label className="block mb-2">
             Estimated Bid Price:
             <input
@@ -195,16 +255,19 @@ export default function CateringBidModal({ onClose, onSave }) {
               className="border border-gray-300 rounded-md p-1 w-full mt-1"
             />
           </label>
-          <div className="flex justify-center items-center">
+
+          {/* Form Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center items-center mt-4">
             <button
-              type="submit"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mr-5"
+              type="button"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mb-2 sm:mb-0"
+              onClick={calculateBidPrice}
             >
               Calculate Bid Price
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mr-5"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mb-2 sm:mb-0"
             >
               Submit Bid
             </button>

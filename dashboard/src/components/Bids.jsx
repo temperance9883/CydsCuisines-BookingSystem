@@ -13,11 +13,13 @@ const BidTable = ({
   onCreateContract,
   setIsCateringModalOpen,
   setIsMealPrepModalOpen,
+  onClose,
+  onSaveBid,
 }) => (
   <div className="bid-section mb-8 bg-white p-6 rounded-lg shadow-lg">
     <h2 className="text-2xl font-semibold mb-4">{`${type} Bids`}</h2>
     <div className="overflow-auto">
-      <table className="min-w-full table-auto ">
+      <table className="min-w-full table-auto">
         <thead>
           <tr className="bg-gray-700 text-white text-sm uppercase leading-normal">
             <th className="py-3 px-6 text-left">Assign Client</th>
@@ -110,57 +112,52 @@ export default function BidComponent() {
   const [isMealPrepModalOpen, setIsMealPrepModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedBid, setSelectedBid] = useState(null);
-  const [isContractModalOpen, setIsContractModalOpen] = useState(false); // State for contract modal visibility
+  const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+  const [bids, setBids] = useState([]);
 
-  // Ensure the fetchBids function is in scope
+  // Fetch bids function moved here
   const fetchBids = async () => {
     try {
       const responseCatering = await fetch(
         "http://127.0.0.1:5000/catering_bids"
       );
       const cateringData = await responseCatering.json();
-      console.log("Catering Bids fetched: ", cateringData); // Debugging output
       setCateringBids(cateringData);
 
       const responseMealPrep = await fetch(
         "http://127.0.0.1:5000/meal_prep_bids"
       );
       const mealPrepData = await responseMealPrep.json();
-      console.log("Meal Prep Bids fetched: ", mealPrepData); // Debugging output
       setMealPrepBids(mealPrepData);
     } catch (error) {
       console.error("Error fetching bids:", error);
     }
   };
 
-  // Fetch customers when component mounts
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/customers");
-        const customersData = await response.json();
-        console.log("Customers fetched: ", customersData); // Debugging output
-        setCustomers(customersData);
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
-    };
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/customers");
+      const customersData = await response.json();
+      setCustomers(customersData);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
 
+  // Call fetch functions on initial render
+  useEffect(() => {
     fetchCustomers();
-    fetchBids(); // Call the fetchBids function after fetching customers
+    fetchBids();
   }, []);
 
+  // Handle bid selection
   const handleSelectBid = async (bid, customerId) => {
-    console.log("Bid selected: ", bid); // Debugging output
     if (!customerId) {
       alert("Please select a client for this bid.");
       return;
     }
 
-    const updatedBid = {
-      ...bid,
-      customer_id: customerId,
-    };
+    const updatedBid = { ...bid, customer_id: customerId };
 
     const url = `http://127.0.0.1:5000/${
       bid.bid_type === "Catering" ? "catering_bids" : "mealprep_bids"
@@ -177,99 +174,103 @@ export default function BidComponent() {
 
       if (response.ok) {
         alert("Bid updated successfully!");
-        fetchBids(); // Refetch the bids after updating
+        fetchBids(); // Refetch bids after update
       } else {
         alert("Error updating the bid.");
       }
     } catch (error) {
-      console.error("Error updating the bid:", error);
+      console.error("Error updating bid:", error);
       alert("Error updating the bid.");
     }
   };
 
+  // Open the bid edit modal
   const handleEditBid = (bid) => {
-    console.log("Opening edit modal for bid: ", bid); // Debugging output
     setSelectedBid(bid);
     setIsEditModalOpen(true);
-    setIsContractModalOpen(false); // Close the contract modal when editing a bid
-  };
-
-  const handleCreateContract = (bid) => {
-    const clientName = customers.find(
-      (customer) => customer.customer_id === bid.customer_id
-    )?.name; // Get client name
-    console.log("Creating contract for bid: ", bid);
-    setSelectedBid(bid);
-    setIsContractModalOpen(true); // Open contract modal
-    setIsEditModalOpen(false); // Close edit modal if open
-  };
-
-  const handleCloseContractModal = () => {
     setIsContractModalOpen(false);
   };
 
+  const handleClose = () => {
+    setIsCateringModalOpen(false);
+    setIsMealPrepModalOpen(false);
+    setIsEditModalOpen(false);
+    setIsContractModalOpen(false);
+  };
+
+  // Open the contract modal
+  const handleCreateContract = (bid) => {
+    setSelectedBid(bid);
+    setIsContractModalOpen(true);
+    setIsEditModalOpen(false);
+  };
+
+  const handleCreateBid = (newBid) => {
+    setBids((prevBids) => [...prevBids, newBid]); // Add the new bid to the list
+    setIsMealPrepModalOpen(false); // Close the modal
+  };
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen bg-[url('/goldflower.jpg')]">
-      <header>
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          Bids Management
-        </h1>
-      </header>
-      {/* Render modals */}
-      {isContractModalOpen && selectedBid && (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <BidTable
+        bids={cateringBids}
+        type="Catering"
+        customers={customers}
+        onSelectBid={handleSelectBid}
+        onEditBid={handleEditBid}
+        onCreateContract={handleCreateContract}
+        setIsCateringModalOpen={setIsCateringModalOpen}
+        setIsMealPrepModalOpen={setIsMealPrepModalOpen}
+        onSaveBid={handleCreateBid}
+      />
+
+      <BidTable
+        bids={mealPrepBids}
+        type="Meal Prep"
+        customers={customers}
+        onSelectBid={handleSelectBid}
+        onEditBid={handleEditBid}
+        onCreateContract={handleCreateContract}
+        setIsCateringModalOpen={setIsCateringModalOpen}
+        setIsMealPrepModalOpen={setIsMealPrepModalOpen}
+        onSaveBid={handleCreateBid}
+      />
+
+      {/* Modals */}
+      {isEditModalOpen && (
+        <EditBidModal
+          isOpen={isEditModalOpen}
+          setIsOpen={setIsEditModalOpen}
+          bid={selectedBid}
+          onSaveBid={handleCreateBid}
+        />
+      )}
+
+      {isContractModalOpen && (
         <GenerateContract
           isOpen={isContractModalOpen}
+          setIsOpen={setIsContractModalOpen}
           bid={selectedBid}
-          clientName={
-            selectedBid?.customer_id &&
-            customers.find(
-              (customer) => customer.customer_id === selectedBid.customer_id
-            )?.name
-          } // Dynamically fetch client name
-          onClose={handleCloseContractModal}
+        />
+      )}
+
+      {isCateringModalOpen && (
+        <CateringBidModal
+          isOpen={isCateringModalOpen}
+          onClose={handleClose}
+          setIsOpen={setIsCateringModalOpen}
+          onSaveBid={handleCreateBid}
         />
       )}
 
       {isMealPrepModalOpen && (
         <MealPrepBidModal
-          onClose={() => setIsMealPrepModalOpen(false)}
-          fetchBids={fetchBids}
+          isOpen={isMealPrepModalOpen}
+          setIsOpen={setIsMealPrepModalOpen}
+          onClose={handleClose}
+          onSaveBid={handleCreateBid}
         />
       )}
-      {isCateringModalOpen && (
-        <CateringBidModal
-          onClose={() => setIsCateringModalOpen(false)}
-          fetchBids={fetchBids}
-        />
-      )}
-      {isEditModalOpen && selectedBid && (
-        <EditBidModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          bid={selectedBid}
-          fetchBids={fetchBids}
-        />
-      )}
-
-      {/* Render bid tables */}
-      <BidTable
-        bids={cateringBids}
-        type="Catering"
-        onSelectBid={handleSelectBid}
-        customers={customers}
-        onEditBid={handleEditBid}
-        onCreateContract={handleCreateContract}
-        setIsCateringModalOpen={setIsCateringModalOpen}
-      />
-      <BidTable
-        bids={mealPrepBids}
-        type="Meal Prep"
-        onSelectBid={handleSelectBid}
-        customers={customers}
-        onEditBid={handleEditBid}
-        onCreateContract={handleCreateContract}
-        setIsMealPrepModalOpen={setIsMealPrepModalOpen}
-      />
     </div>
   );
 }

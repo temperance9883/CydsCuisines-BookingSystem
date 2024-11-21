@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function MealPrepBidModal({ onClose, onSave }) {
+export default function MealPrepBidModal({ onClose, onSaveBid }) {
   const [mealBidId, setMealBidId] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [bidStatus, setBidStatus] = useState("");
@@ -20,21 +20,10 @@ export default function MealPrepBidModal({ onClose, onSave }) {
       try {
         const response = await fetch("http://127.0.0.1:5000/customers");
         const customersData = await response.json();
-        console.log("Customers fetched: ", customersData); // Debugging output
-
-        // Check if customersData is an array before setting state
-        if (Array.isArray(customersData)) {
-          setCustomers(customersData);
-        } else {
-          console.error(
-            "Fetched customersData is not an array:",
-            customersData
-          );
-          setCustomers([]); // Default to an empty array
-        }
+        console.log("Customers fetched: ", customersData);
+        setCustomers(customersData);
       } catch (error) {
         console.error("Error fetching customers:", error);
-        setCustomers([]); // Default to an empty array in case of error
       }
     };
     fetchCustomers();
@@ -54,11 +43,11 @@ export default function MealPrepBidModal({ onClose, onSave }) {
     fetchBookings();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newBid = {
       meal_bid_id: mealBidId,
-      customers_id: customer,
+      customer_id: customer,
       created_at: createdAt,
       bid_status: bidStatus,
       miles: miles,
@@ -69,8 +58,27 @@ export default function MealPrepBidModal({ onClose, onSave }) {
       supplies: supplies,
       booking_id: bookingId,
     };
-    onSave(newBid); // Call the save function passed from parent
-    onClose(); // Close the modal after submission
+    try {
+      const response = await fetch("http://127.0.0.1:5000/meal_prep_bids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newBid),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Bid saved:", data);
+        onSaveBid(data); // Optional: Pass saved bid to parent
+        onClose(); // Close modal
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save bid:", errorData);
+      }
+    } catch (error) {
+      console.error("Error during bid submission:", error);
+    }
   };
 
   return (
@@ -79,7 +87,7 @@ export default function MealPrepBidModal({ onClose, onSave }) {
         className="fixed inset-0 bg-black opacity-50"
         onClick={onClose}
       ></div>
-      <div className="bg-white rounded-lg shadow-lg p-6 z-10 w-1/3">
+      <div className="bg-white rounded-lg shadow-lg p-6 z-10 w-full max-w-4xl mx-4 sm:mx-8 md:mx-12">
         <h2 className="text-xl font-semibold mb-4">Meal Prep Bid</h2>
         <form onSubmit={handleSubmit}>
           {/* Add your form fields here */}
@@ -195,10 +203,10 @@ export default function MealPrepBidModal({ onClose, onSave }) {
               className="border border-gray-300 rounded-md p-2 w-full mt-1"
             />
           </label>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4 space-x-2">
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600"
             >
               Submit Bid
             </button>

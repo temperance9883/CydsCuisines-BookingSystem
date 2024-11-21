@@ -71,10 +71,7 @@ export default function Customers() {
 
       await fetchCustomers();
 
-      resetNewCustomer();
-      setIsModalOpen(false);
-      setEditMode(false);
-      setEditingCustomerId(null);
+      closeModal(); // Close the modal after success
     } catch (error) {
       setError(error.message);
     }
@@ -121,14 +118,19 @@ export default function Customers() {
       );
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        setError(errorMessage);
+        const errorMessage = await response.json();
+        console.error("Error:", errorMessage);
         return;
       }
 
-      await fetchCustomers();
+      // Update the customers state to remove the deleted customer
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer.customer_id !== customerId)
+      );
+
+      closeModal(); // Close the modal after success
     } catch (error) {
-      setError(error.message);
+      console.error("Error:", error);
     }
   };
 
@@ -155,7 +157,6 @@ export default function Customers() {
         </button>
       </div>
 
-      {/* Wrapper div with background image */}
       <div className="bg-[url('/goldflower.avif')] bg-cover backdrop-blur-sm bg-opacity-40 p-4 rounded-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border-collapse bg-white rounded-md">
@@ -201,7 +202,7 @@ export default function Customers() {
         isOpen={isModalOpen}
         onClose={closeModal}
         onSubmit={handleAddOrUpdateCustomer}
-        onDelete={handleDeleteCustomer}
+        onDelete={() => handleDeleteCustomer(editingCustomerId)}
         editMode={editMode}
       >
         <div className="space-y-4">
