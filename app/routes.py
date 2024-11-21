@@ -75,28 +75,6 @@ def edit_customer(customer_id):
 
 #fetch all bids
 # Route to fetch all meal prep bids
-@main.route('/meal_prep_bids', methods=['GET'])
-def get_meal_prep_bids():
-    meal_prep_bids = MealPrepBid.query.all()
-    
-    # Serialize the meal prep bids
-    meal_prep_bids_list = [
-        {
-            'meal_bid_id': bid.meal_bid_id,
-            'created_at': bid.created_at.isoformat(),
-            'bid_status': bid.bid_status,
-            'miles': bid.miles,
-            'service_fee': str(bid.service_fee),
-            'estimated_groceries': str(bid.estimated_groceries),
-            'supplies': str(bid.supplies),
-            'booking_id': bid.booking_id,
-            'customer_id': bid.customer_id
-        } for bid in meal_prep_bids
-    ]
-
-    return jsonify(meal_prep_bids_list), 200
-
-# Route to fetch all catering bids
 @main.route('/catering_bids', methods=['GET'])
 def get_catering_bids():
     catering_bids = CateringBid.query.all()
@@ -105,12 +83,12 @@ def get_catering_bids():
     catering_bids_list = [
         {
             'catering_bid_id': bid.catering_bid_id,
-            'created_at': bid.created_at.isoformat(),
+            'created_at': bid.created_at.isoformat() if bid.created_at else None,
             'bid_status': bid.bid_status,
             'miles': bid.miles,
             'service_fee': str(bid.service_fee),
-            'clean_up': str(bid.clean_up),
-            'decorations': str(bid.decorations),
+            'clean_up': bid.clean_up,
+            'decorations': bid.decorations,
             'estimated_groceries': str(bid.estimated_groceries),
             'foods': bid.foods,
             'estimated_bid_price': str(bid.estimated_bid_price),
@@ -121,6 +99,28 @@ def get_catering_bids():
 
     return jsonify(catering_bids_list), 200
 
+@main.route('/meal_prep_bids', methods=['GET'])
+def get_meal_prep_bids():
+    meal_prep_bids = MealPrepBid.query.all()
+    
+    # Serialize the meal prep bids
+    meal_prep_bids_list = [
+        {
+            'meal_bid_id': bid.meal_bid_id,
+            'created_at': bid.created_at.isoformat() if bid.created_at else None,
+            'bid_status': bid.bid_status,
+            'miles': bid.miles,
+            'service_fee': str(bid.service_fee),
+            'estimated_groceries': str(bid.estimated_groceries),
+            'supplies': str(bid.supplies),
+            'booking_id': bid.booking_id,
+            'customer_id': bid.customer_id,
+            'foods': bid.foods,
+            'estimated_bid_price': str(bid.estimated_bid_price),
+        } for bid in meal_prep_bids
+    ]
+
+    return jsonify(meal_prep_bids_list), 200
 # Create a new bid based on service type
 
 # PUT route to update a Meal Prep bid
@@ -186,6 +186,13 @@ def update_catering_bid(catering_bid_id):
 @main.route('/meal_prep_bids', methods=['POST'])
 def create_meal_prep_bid():
     data = request.json
+    print("Received data:", data) 
+    required_fields = ['customer_id', 'bid_status', 'miles', 'supplies', 
+                       'estimated_groceries', 'foods', 'estimated_bid_price','booking_id']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
 
     # Create a new MealPrepBid instance
     new_bid = MealPrepBid(
@@ -193,8 +200,11 @@ def create_meal_prep_bid():
         miles=data['miles'],
         service_fee=data['service_fee'],
         estimated_groceries=data['estimated_groceries'],
+        estimated_bid_price=data['estimated_bid_price'],
         supplies=data.get('supplies', 0),  # Default to 0 if not provided
-        booking_id=data['booking_id']
+        booking_id=data['booking_id'],
+        foods=data['foods'],
+        customer_id=data['customer_id']
     )
 
     try:
@@ -210,14 +220,24 @@ def create_meal_prep_bid():
 def create_catering_bid():
     data = request.json
 
+    # Validate required fields
+    required_fields = ['customer_id', 'bid_status', 'miles', 'service_fee', 
+                       'estimated_groceries', 'foods', 'estimated_bid_price','decorations','booking_id']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+
     # Create a new CateringBid instance
     new_bid = CateringBid(
         bid_status=data['bid_status'],
         miles=data['miles'],
         service_fee=data['service_fee'],
-        clean_up=data.get('clean_up', False),
-        decorations=data.get('decorations', False),
+        clean_up=data.get('clean_up'),
+        decorations=data.get('decorations'),
         estimated_groceries=data['estimated_groceries'],
+        foods=data['foods'],
+        estimated_bid_price=data['estimated_bid_price'],
         booking_id=data['booking_id'],
         customer_id=data['customer_id']
     )
@@ -229,8 +249,6 @@ def create_catering_bid():
     except IntegrityError:
         db.session.rollback()
         return jsonify({'error': 'Failed to create catering bid'}), 400
-
-
 
 
 # Fetch all bookings

@@ -4,7 +4,8 @@ from sqlalchemy import Sequence
 import pytz
 
 class Customer(db.Model):
-    __tablename__ = 'Customers'
+    __tablename__ = 'Customers'  # Ensure it matches the exact casing
+
     customer_id = db.Column(db.BigInteger, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
@@ -17,6 +18,7 @@ class Customer(db.Model):
             'email': self.email,
             'phone_number': self.phone_number
         }
+
     
 class User(db.Model):
     __tablename__ = 'User'
@@ -93,49 +95,61 @@ class Service(db.Model):
 class MealPrepBid(db.Model):
     __tablename__ = 'Meal_Prep_Bids'
     
-    meal_bid_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True) 
-    created_at = db.Column(db.DateTime(timezone=True), default=db.func.current_timestamp(), nullable=False)
-    bid_status = db.Column(db.Text, nullable=False)
-    miles = db.Column(db.BigInteger, nullable=False)
-    service_fee = db.Column(db.BigInteger, nullable=False)
-    estimated_groceries = db.Column(db.BigInteger, nullable=False)
-    supplies = db.Column(db.BigInteger, nullable=False)
+    meal_bid_id = db.Column(db.BigInteger, primary_key=True)  # Unique ID for each bid
+    created_at = db.Column(db.TIMESTAMP(timezone=True), default=datetime.utcnow)  # Timestamp for when the bid is created
+    bid_status = db.Column(db.String, nullable=False)  # Status of the bid
+    miles = db.Column(db.BigInteger, nullable=False)  # Miles associated with the bid
+    service_fee = db.Column(db.BigInteger, nullable=False)  # Service fee for the bid
+    estimated_groceries = db.Column(db.BigInteger, nullable=False)  # Estimated cost of groceries
+    supplies = db.Column(db.BigInteger, nullable=False)  # Supplies needed for the meal prep
     booking_id = db.Column(db.BigInteger, db.ForeignKey('Bookings.booking_id'), nullable=False)
-    customer_id = db.Column(db.BigInteger, primary_key=True)
+    customer_id = db.Column(db.BigInteger, db.ForeignKey('Customers.customer_id'), nullable=False)
+    foods = db.Column(db.String)  # Description of the foods
+    estimated_bid_price = db.Column(db.BigInteger, nullable=False)  # Estimated price of the bid
+    
+    # Relationships
+    booking = db.relationship('Booking', backref='meal_prep_bids')  # Booking reference
+    customer = db.relationship('Customer', backref='meal_prep_bids')  # Customer reference
 
     def to_dict(self):
         return {
             'meal_bid_id': self.meal_bid_id,
-            'created_at': self.created_at.isoformat(),
+            'created_at': self.created_at,
             'bid_status': self.bid_status,
             'miles': self.miles,
             'service_fee': self.service_fee,
             'estimated_groceries': self.estimated_groceries,
             'supplies': self.supplies,
-            'booking_id': self.booking_id
+            'booking_id': self.booking_id,
+            'customer_id': self.customer_id,
+            'foods': self.foods,
+            'estimated_bid_price': self.estimated_bid_price,
         }
 
 class CateringBid(db.Model):
     __tablename__ = 'Catering_Bids'
     
-    catering_bid_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)  # auto-increment
-    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, nullable=False)
-    bid_status = db.Column(db.String, nullable=False)
-    miles = db.Column(db.BigInteger, nullable=True)
-    service_fee = db.Column(db.BigInteger, nullable=False)
-    clean_up = db.Column(db.BigInteger, nullable=True)
-    decorations = db.Column(db.BigInteger, nullable=True)
-    estimated_groceries = db.Column(db.BigInteger, nullable=True)
-    foods = db.Column(db.String)
-    estimated_bid_price = db.Column(db.BigInteger, nullable=True)
-    booking_id = db.Column(db.BigInteger, db.ForeignKey('Bookings.booking_id'), nullable=False)
-    customer_id = db.Column(db.BigInteger, primary_key=True)
-   
+    catering_bid_id = db.Column(db.BigInteger, primary_key=True)  # Unique ID for each bid
+    created_at = db.Column(db.TIMESTAMP(timezone=True), default=datetime.utcnow)  # Timestamp for when the bid is created
+    bid_status = db.Column(db.String, nullable=False)  # Status of the bid
+    miles = db.Column(db.BigInteger, nullable=False)  # Miles associated with the bid
+    service_fee = db.Column(db.BigInteger, nullable=False)  # Service fee for the bid
+    clean_up = db.Column(db.String)  # Optional clean-up service description
+    decorations = db.Column(db.String)  # Optional decorations service description
+    estimated_groceries = db.Column(db.BigInteger, nullable=False)  # Estimated cost of groceries
+    booking_id = db.Column(db.BigInteger, db.ForeignKey('Bookings.booking_id'), nullable=False)  # Foreign key from Bookings
+    customer_id = db.Column(db.BigInteger, db.ForeignKey('Customers.customer_id'), nullable=False)  # Foreign key from Customers
+    foods = db.Column(db.String)  # Description of the foods
+    estimated_bid_price = db.Column(db.BigInteger, nullable=False)  # Estimated price of the bid
+    
+    # Relationships
+    booking = db.relationship('Booking', backref='catering_bids')  # Booking reference
+    customer = db.relationship('Customer', backref='catering_bids')  # Customer reference
 
     def to_dict(self):
         return {
             'catering_bid_id': self.catering_bid_id,
-            'created_at': self.created_at.isoformat(),
+            'created_at': self.created_at,
             'bid_status': self.bid_status,
             'miles': self.miles,
             'service_fee': self.service_fee,
@@ -143,7 +157,11 @@ class CateringBid(db.Model):
             'decorations': self.decorations,
             'estimated_groceries': self.estimated_groceries,
             'booking_id': self.booking_id,
+            'customer_id': self.customer_id,
+            'foods': self.foods,
+            'estimated_bid_price': self.estimated_bid_price,
         }
+
 
 class Calendar(db.Model):
     __tablename__ = 'Calendar'
