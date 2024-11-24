@@ -223,7 +223,7 @@ export default function BookingCalendar() {
                 Edit Booking for{" "}
                 {moment(selectedEvent.start).format("MM/DD/YYYY")}
               </h2>
-              <p>Booking ID: {selectedEvent.booking_id}</p>
+              <p>Customer: {selectedEvent.customer_id}</p>
 
               <div className="mb-4">
                 <label className="block mb-1">Event Type:</label>

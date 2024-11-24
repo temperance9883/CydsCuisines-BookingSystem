@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 export default function CateringBidModal({ onClose, onSaveBid }) {
   const [customer, setCustomer] = useState(""); // Stores selected customer ID
   const [cateringBidId, setCateringBidId] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
   const [bidStatus, setBidStatus] = useState("");
   const [miles, setMiles] = useState("");
   const [serviceFee, setServiceFee] = useState("");
@@ -45,10 +44,7 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
   }, []);
 
   const calculateBidPrice = () => {
-    // Miles calculation
     const milesCharge = miles <= 10 ? 10 : 10 + (miles - 10);
-
-    // Catering-specific logic
     const decorationCost = decorations ? 60 : 0;
     const cleanUpCost = cleanUp ? 30 : 0;
 
@@ -67,17 +63,17 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
 
     const newBid = {
       catering_bid_id: cateringBidId,
-      customer_id: customer, // Customer ID from the dropdown
-      created_at: new Date().toISOString(), // Set current timestamp if needed
+      customer_id: customer,
+      created_at: new Date().toISOString(), // Set the current timestamp automatically
       bid_status: bidStatus,
       miles: parseInt(miles, 10),
       service_fee: parseInt(serviceFee, 10),
-      clean_up: cleanUp, // Assuming dropdown or checkbox for Boolean
-      decorations: decorations, // Same assumption
+      clean_up: cleanUp,
+      decorations: decorations,
       estimated_groceries: parseInt(estimatedGroceries, 10),
       foods,
       estimated_bid_price: parseInt(estimatedBidPrice, 10),
-      booking_id: bookingId, // Booking ID from the dropdown
+      booking_id: bookingId,
     };
 
     try {
@@ -92,8 +88,9 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
       if (response.ok) {
         const data = await response.json();
         console.log("Bid saved:", data);
-        onSaveBid(data); // Optional: Pass saved bid to parent
+        onSaveBid(data); // Pass saved bid to parent
         onClose(); // Close modal
+        fetchBids(); // Refresh the bid list
       } else {
         const errorData = await response.json();
         console.error("Failed to save bid:", errorData);
@@ -148,16 +145,7 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
             </select>
           </label>
 
-          {/* Created At (auto-filled) */}
-          <label className="block mb-2">
-            Created At:
-            <input
-              type="text"
-              value={new Date().toISOString()} // Automatically set current timestamp
-              readOnly
-              className="border border-gray-300 rounded-md p-1 w-full mt-1 bg-gray-100 cursor-not-allowed"
-            />
-          </label>
+          {/* Removed the Created At input field, as it will be automatically set */}
 
           {/* Bid Status dropdown */}
           <label className="block mb-2">
@@ -260,23 +248,16 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
           <div className="flex flex-col sm:flex-row justify-center items-center mt-4">
             <button
               type="button"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mb-2 sm:mb-0"
-              onClick={calculateBidPrice}
+              className="bg-blue-500 text-white rounded-md px-4 py-2 sm:mr-4 mb-2 sm:mb-0"
+              onClick={onClose}
             >
-              Calculate Bid Price
+              Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-blue-600 mb-2 sm:mb-0"
+              className="bg-green-500 text-white rounded-md px-4 py-2"
             >
-              Submit Bid
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 text-black rounded-md px-4 py-2 hover:bg-gray-400"
-            >
-              Close
+              Save Bid
             </button>
           </div>
         </form>

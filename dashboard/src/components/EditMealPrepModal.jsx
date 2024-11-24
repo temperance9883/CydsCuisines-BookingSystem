@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from "react";
 
-export default function MealPrepBidModal({ onClose, onSaveBid }) {
-  const [mealBidId, setMealBidId] = useState("");
-  const [bidStatus, setBidStatus] = useState("");
-  const [miles, setMiles] = useState("");
-  const [serviceFee, setServiceFee] = useState("");
-  const [foods, setFoods] = useState("");
-  const [estimatedGroceries, setEstimatedGroceries] = useState("");
-  const [estimatedBidPrice, setEstimatedBidPrice] = useState("");
-  const [supplies, setSupplies] = useState("");
-  const [bookingId, setBookingId] = useState("");
-  const [customer, setCustomer] = useState("");
-  const [customers, setCustomers] = useState([]);
-  const [booking, setBooking] = useState([]);
+export default function EditMealPrepBidModal({ onClose, onSaveBid, bid }) {
+  const [mealBidId, setMealBidId] = useState(bid.meal_bid_id || "");
+  const [bidStatus, setBidStatus] = useState(bid.bid_status || "");
+  const [miles, setMiles] = useState(bid.miles || "");
+  const [serviceFee, setServiceFee] = useState(bid.service_fee || "");
+  const [foods, setFoods] = useState(bid.foods || "");
+  const [estimatedGroceries, setEstimatedGroceries] = useState(
+    bid.estimated_groceries || ""
+  );
+  const [estimatedBidPrice, setEstimatedBidPrice] = useState(
+    bid.estimated_bid_price || ""
+  );
+  const [supplies, setSupplies] = useState(bid.supplies || "");
+  const [bookingId, setBookingId] = useState(bid.booking_id || "");
+  const [customer, setCustomer] = useState(bid.customer_id || ""); // Directly use the provided `customer`
+
+  const [customers, setCustomers] = useState([]); // State for customers
+  const [booking, setBooking] = useState([]); // State for bookings
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/customers");
         const customersData = await response.json();
-        console.log("Customers fetched: ", customersData);
         setCustomers(customersData);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
     };
     fetchCustomers();
-  }, []);
 
-  useEffect(() => {
     const fetchBookings = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/bookings");
         const bookingData = await response.json();
-        console.log("Bookings fetched: ", bookingData); // Debugging output
         setBooking(bookingData);
       } catch (error) {
         console.error("Error fetching bookings:", error);
@@ -45,13 +46,11 @@ export default function MealPrepBidModal({ onClose, onSaveBid }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Automatically set createdAt to the current time when the form is submitted
-    const createdAt = new Date().toISOString();
-
-    const newBid = {
+    // Set the created_at field to the current timestamp
+    const updatedBid = {
       meal_bid_id: mealBidId,
-      customer_id: customer,
-      created_at: createdAt,
+      customer_id: customer, // Use the provided `customer`
+      created_at: new Date().toISOString(), // Automatically set created_at
       bid_status: bidStatus,
       miles: miles,
       service_fee: serviceFee,
@@ -63,25 +62,28 @@ export default function MealPrepBidModal({ onClose, onSaveBid }) {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/meal_prep_bids", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newBid),
-      });
+      const response = await fetch(
+        `http://127.0.0.1:5000/meal_prep_bids/${bid.meal_bid_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedBid),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Bid saved:", data);
-        onSaveBid(data); // Optional: Pass saved bid to parent
-        onClose(); // Close modal
+        console.log("Bid updated:", data);
+        onSaveBid(data); // Pass the updated bid to parent
+        onClose(); // Close the modal
       } else {
         const errorData = await response.json();
-        console.error("Failed to save bid:", errorData);
+        console.error("Failed to update bid:", errorData);
       }
     } catch (error) {
-      console.error("Error during bid submission:", error);
+      console.error("Error during bid update:", error);
     }
   };
 
@@ -92,16 +94,15 @@ export default function MealPrepBidModal({ onClose, onSaveBid }) {
         onClick={onClose}
       ></div>
       <div className="bg-white rounded-lg shadow-lg p-6 z-10 w-full max-w-4xl mx-4 sm:mx-8 md:mx-12">
-        <h2 className="text-xl font-semibold mb-4">Meal Prep Bid</h2>
+        <h2 className="text-xl font-semibold mb-4">Edit Meal Prep Bid</h2>
         <form onSubmit={handleSubmit}>
-          {/* Add your form fields here */}
+          {/* Removed created_at input field */}
           <label className="block mb-2">
             Customer:
             <select
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
-              required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+              className="border border-gray-300 rounded-md p-1 w-full mt-1"
             >
               <option value="">Select a Customer</option>
               {customers.map((customer) => (
@@ -111,23 +112,6 @@ export default function MealPrepBidModal({ onClose, onSaveBid }) {
               ))}
             </select>
           </label>
-          <label className="block mb-2">
-            Booking Event:
-            <select
-              value={bookingId}
-              onChange={(e) => setBookingId(e.target.value)}
-              required
-              className="border border-gray-300 rounded-md p-2 w-full mt-1"
-            >
-              <option value="">Select a Booking Event</option>
-              {booking.map((item) => (
-                <option key={item.booking_id} value={item.booking_id}>
-                  {item.event_type}
-                </option>
-              ))}
-            </select>
-          </label>
-          {/* Removed Created At input */}
           <label className="block mb-2">
             Bid Status:
             <input
@@ -198,12 +182,22 @@ export default function MealPrepBidModal({ onClose, onSaveBid }) {
               className="border border-gray-300 rounded-md p-2 w-full mt-1"
             />
           </label>
+          <label className="block mb-2">
+            Booking Event:
+            <input
+              type="text"
+              value={bookingId}
+              onChange={(e) => setBookingId(e.target.value)}
+              required
+              className="border border-gray-300 rounded-md p-2 w-full mt-1"
+            />
+          </label>
           <div className="flex justify-end mt-4 space-x-2">
             <button
               type="submit"
               className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600"
             >
-              Submit Bid
+              Update Bid
             </button>
             <button
               type="button"

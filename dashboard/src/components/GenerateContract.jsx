@@ -75,13 +75,6 @@ export default function GenerateContract({ bid, clientName }) {
     let yPosition = margin;
 
     // Title - Centered
-    // doc.setFontSize(14);
-    // const title = "CATERING SERVICE AGREEMENT";
-    // const titleWidth =
-    //   (doc.getStringUnitWidth(title) * doc.getFontSize()) /
-    //   doc.internal.scaleFactor;
-    // const titleX = (doc.internal.pageSize.width - titleWidth) / 2;
-    // doc.text(title, titleX, 10);
     doc.setFontSize(14);
     const title = "CATERING SERVICE AGREEMENT";
     const titleWidth =
@@ -92,93 +85,77 @@ export default function GenerateContract({ bid, clientName }) {
     yPosition += 20;
 
     // Agreement intro text
-    // doc.setFontSize(12);
-    // const introText = `FOOD CATERING SERVICE AGREEMENT (“Agreement”) dated ${eventDate} (the “Effective Date”) between Cydney Thompson (the “Caterer”), and ${clientName} (the “Client”) for the purpose of catering services in consideration of the mutual obligations specified in this Agreement, the parties, intending to be legally bound hereby, agree to the following:`;
-    // const introTextLines = doc.splitTextToSize(introText, 180); // Adjust text wrapping width
-    // doc.text(introTextLines, 10, 20);
     doc.setFontSize(12);
-    const introText = `FOOD CATERING SERVICE AGREEMENT (“Agreement”) dated ${eventDate}...`;
+    const introText = `FOOD CATERING SERVICE AGREEMENT (“Agreement”) dated ${eventDate}  is made between Cydney Thompson (the “Caterer”), and ******Clients Name***** (the “Client”), with an event at ****Event Location****, for the purpose of catering services. In consideration of the mutual obligations specified in this Agreement, the parties, intending to be legally bound hereby, agree to the following:`;
+
     yPosition = addText(introText, margin, yPosition);
 
     // Section 1: Services
-    // let yPosition = 50;
-    // doc.setTextColor(0, 0, 255);
-    // doc.text("1. Services", 10, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
     doc.setFontSize(12);
-    doc.setTextColor(0, 0, 255);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
     yPosition = addText("1. Services", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
-    // const serviceText = [
-    //   `Event title: ${eventTitle || "N/A"}`,
-    //   `Address: ${address || "N/A"}`,
-    //   `Date: ${eventDate}`,
-    //   `Start and End Time: ${startTime || "N/A"} - ${endTime || "N/A"}`,
-    //   "The food service to include client choice menu.",
-    //   `Attendees: The Caterer agrees to provide Services for an estimated ${
-    //     numberofguests || "N/A"
-    //   } individuals for the EVENT. If this number of attendees should increase, the amount of the total fee shall be reflected in this agreement.`,
-    //   "Menu: This shall include all requests made by the client and will be completed no sooner than 10 days prior to the Event. If any changes are needed that increases the costs for the Caterer, the Total Fee shall review.",
-    // ];
-
-    // serviceText.forEach((text) => {
-    //   const lines = doc.splitTextToSize(text, 180); // Adjust wrapping width
-    //   doc.text(lines, 10, yPosition);
-    //   yPosition += lines.length * 7;
-    // });
     const serviceText = [
+      // `Name: ${name || "N/A"}`,
       `Event title: ${eventTitle || "N/A"}`,
       `Address: ${address || "N/A"}`,
       `Date: ${eventDate}`,
       `Start and End Time: ${startTime || "N/A"} - ${endTime || "N/A"}`,
-      `Attendees: The Caterer agrees to provide Services for an estimated ${
+      `Attendees: The Caterer agrees to provide Services for an estimated count of ${
         numberofguests || "N/A"
-      }...`,
+      } individuals for the Event. If this number increases, the total fee will be adjusted accordingly.`,
     ];
+    `Menu: All requested food items are listed below. Any changes that increase the costs for the Caterer will be reflected in the total fee. Finalized menu items must be confirmed no later than 10 days prior to the Event.
+
+        FOOD ITEMS:
+        Steak and egg hash, stuffed French toast, fruit tray, and mock mimosas
+        Chicken gyros with a Greek salad
+        Chili lime shrimp wontons
+        Charcuterie board
+        Pan-seared fish with sweet potato mash and broccolini
+        Mocktails: Faux-jitos
+        Peach cobbler with ice cream`;
     serviceText.forEach((text) => {
       yPosition = addText(text, margin, yPosition);
+
+      // return y + sectionSpacing;
     });
 
     // Section 2: Calculation of Fees
-    // doc.setTextColor(0, 0, 255);
-    // doc.text("2. Calculation of Fees", 10, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
-
-    // const feeText = [
-    //   `In exchange for food service provided, the client agrees to pay the caterer a flat fee of $${totalAmount}.`,
-    //   `Deposit: As part of this agreement, the caterer requires the client to pay 50% of full fee ($${deposit}) at the signing of this contract.`,
-    // ];
-
-    // feeText.forEach((text) => {
-    //   const lines = doc.splitTextToSize(text, 180);
-    //   doc.text(lines, 10, yPosition);
-    //   yPosition += lines.length * 7;
-    // });
-
-    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(12);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
     yPosition = addText("2. Calculation of Fees", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
     const feeText = [
-      `In exchange for food service provided, the client agrees to pay the caterer $${totalAmount}.`,
-      `Deposit: 50% of the total fee is $${deposit}.`,
+      `In exchange for food service provided, the client agrees to pay the caterer a flat fee of $${totalAmount}.`,
+      `Deposit: As part of this agreement, the caterer requires the client to pay 50% of the total fee which comes out to be $${deposit}.`,
     ];
     feeText.forEach((text) => {
       yPosition = addText(text, margin, yPosition);
     });
 
     // Section 3: Event Changes
-    // doc.setTextColor(0, 0, 255);
-    // doc.text("3. Event Changes", 10, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
-
-    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(12);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
     yPosition = addText("3. Event Changes", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
     const changesText = [
       "After signing the agreement, changes to the event by the client can be made no sooner than 5 days prior to the Event.",
@@ -186,57 +163,43 @@ export default function GenerateContract({ bid, clientName }) {
       "If changes or cancellation of the event is made after the cancellation period, then client forfeits the entire deposit.",
     ];
 
-    // changesText.forEach((text) => {
-    //   const lines = doc.splitTextToSize(text, 180);
-    //   doc.text(lines, 10, yPosition);
-    //   yPosition += lines.length * 7;
-    // });
-
     changesText.forEach((text) => {
       yPosition = addText(text, margin, yPosition);
     });
 
     // Section 4: Payment
-    // doc.setTextColor(0, 0, 255);
-    // doc.text("4. Payment", 10, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
-
-    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(12);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
     yPosition = addText("4. Payment", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
     const paymentText = [
-      "The Client will be responsible to pay the caterer for the total amount by event date.",
+      "The Client will be responsible to pay the caterer for the total amount by the event date.",
       "Methods of payment include: -Cash -Cash App -Apple Pay -Zelle",
     ];
-
-    // paymentText.forEach((text) => {
-    //   const lines = doc.splitTextToSize(text, 180);
-    //   doc.text(lines, 10, yPosition);
-    //   yPosition += lines.length * 7;
-    // });
 
     paymentText.forEach((text) => {
       yPosition = addText(text, margin, yPosition);
     });
 
-    // Add a new page before Section 5
-    doc.addPage();
-    yPosition = 30;
-
     // Section 5: Miscellaneous
-    // doc.setTextColor(0, 0, 255);
-    // doc.text("5. MISCELLANEOUS", 10, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
-
-    const leftMargin = 25; // 1 inch = ~25 units in jsPDF
+    const leftMargin = 20; // 1 inch = ~25 units in jsPDF
     const rightMargin = 180; // Page width - 1 inch
     const lineSpacing = 10; // Double-spacing adjustment
-    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(12);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
     yPosition = addText("5. Miscellaneous", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
     const miscellaneousText = [
       "Independent Contractor: It is agreed that the Caterer will be considered an independent contractor for the purpose of this agreement, they maintain their own independent entity.",
@@ -247,80 +210,83 @@ export default function GenerateContract({ bid, clientName }) {
       "• Client to provide cutlery, tableware as needed, unless given 5-day notice to caterer to provide.",
     ];
 
-    // miscellaneousText.forEach((text) => {
-    //   if (text.startsWith("•")) {
-    //     // Bullet points - indent them
-    //     doc.text(text, 20, yPosition); // Indented for bullets
-    //     yPosition += 20; // Increment for single-line bullet
-    //   } else {
-    //     // Regular text - wrap it to fit within the document
-    //     const lines = doc.splitTextToSize(text, 180); // Wrap text within 180 width
-    //     doc.text(lines, 10, yPosition); // Add text
-    //     yPosition += lines.length * 10; // Increment yPosition for all wrapped lines
-    //   }
-
     // Loop through miscellaneousText with proper formatting
     miscellaneousText.forEach((text) => {
-      if (text.startsWith("•")) {
-        // Bullet points: Add indentation for bullets
-        doc.text(text, leftMargin + 10, yPosition); // Extra indent for bullets
-        yPosition += lineSpacing * 2; // Double-spacing for bullet points
-      } else {
-        // Regular text: Split and wrap text to fit within the margins
-        const textWidth = 180 - leftMargin;
-        const lines = doc.splitTextToSize(text, textWidth); // Wrap text
+      const textWidth = rightMargin - leftMargin; // Width for text wrapping
+      const lines = doc.splitTextToSize(text, textWidth);
 
-        // Loop through lines and add double spacing
+      if (text.startsWith("•")) {
+        // Handle bullet points
+        lines.forEach((line, index) => {
+          const xOffset = index === 0 ? leftMargin + 5 : leftMargin; // Indent first line
+          doc.text(line, xOffset, yPosition); // Add text
+          yPosition += lineSpacing; // Line spacing for wrapped lines
+        });
+      } else {
+        // Handle regular text
         lines.forEach((line) => {
-          doc.text(line, leftMargin, yPosition); // Add each line with left margin
-          yPosition += lineSpacing * 1; // Double-spacing within the same paragraph
+          doc.text(line, leftMargin, yPosition); // Add text with normal margin
+          yPosition += lineSpacing; // Line spacing
         });
       }
 
       // Add a new page if content exceeds the page height (A4 size: ~270 units)
-      if (yPosition > 270) {
+      if (yPosition > doc.internal.pageSize.height - margin) {
         doc.addPage();
-        yPosition = 30; // Reset yPosition for the new page
+        yPosition = margin; // Reset yPosition for the new page
       }
     });
 
-    // // Adding indentation for bulleted points
-    // miscellaneousText.forEach((text, index) => {
-    //   if (text.startsWith("•")) {
-    //     doc.text(text, 20, yPosition); // Indent bullet points
-    //   } else {
-    //     const lines = doc.splitTextToSize(text, 180);
-    //     doc.text(lines, 10, yPosition);
-    //   }
-    //   yPosition += 10;
-    // });
+    //  // Add a new page before Section 6
+    //  doc.addPage();
+    //  yPosition = 30;
 
     // Section 6: Indemnification / Release
-    // doc.setTextColor(0, 51, 153);
-    // doc.text("6. Indemnification / Release", 15, yPosition);
-    // doc.setTextColor(0, 0, 0);
-    // yPosition += 10;
-
-    doc.setTextColor(0, 0, 255);
-    yPosition = addText("6. Indemnification / Release", margin, yPosition);
+    doc.setFontSize(12);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+    doc.setFontSize(14);
+    yPosition += 10;
+    yPosition = addText("6. Indemnification/ Release", margin, yPosition);
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("times", "normal");
 
     const indemnificationText = [
-      "Caterer agrees to take all necessary precautions to prevent injury to any persons or damage to property during the term of this Agreement.",
-      "The caterer will not be held liable for direct, indirect, incidental, or consequential damages (including but not limited to damages for lost profits or increased expenses) arising from any cause, including personal injuries, physical illness, or damage to property.",
+      "Caterer agrees to take all necessary precautions to prevent injury to any persons or damage to property during the term of this Agreement. The caterer will not be held liable for direct, indirect, incidental or consequential damages (including but not limited to damages for lost prots, or increased expenses) with respect to any claim related to this agreement and the services provided Client agrees to take all necessary precautions to prevent injury to any persons or damage to property during the term of this Agreement, and shall indemnify, defend and hold harmless the Caterer, its officers, directors, shareholders, employees, representatives and/or agents from any claim, liability, loss, cost, damage, judgment, settlement or expense (including attorney’s fees) resulting from or arising in any way out of injury (including death) to any person or damage to property arising in any way out of any act, error, omission or negligence on the part of the Caterer or Caterer employees.",
+      "This Agreement shall be effective on the date hereof and shall continue until terminated by either party upon 5 business days written notice.",
     ];
-
-    // indemnificationText.forEach((line) => {
-    //   const lines = doc.splitTextToSize(line, 180);
-    //   doc.text(lines, 15, yPosition);
-    //   yPosition += lines.length * 7;
-    // });
 
     indemnificationText.forEach((text) => {
       yPosition = addText(text, margin, yPosition);
     });
 
-    // Footer
+    // Signing Area
+    yPosition += 20; // Add extra space before the signing area
+
+    // Check if the signing area fits on the current page
+    if (yPosition + 20 > pageHeight - margin) {
+      doc.addPage(); // Add a new page if the current one overflows
+      yPosition = margin; // Reset yPosition for the new page
+    }
+
+    doc.setFontSize(14);
+    doc.setTextColor(64, 64, 64);
+    doc.setFont("times", "bold");
+
+    doc.text(
+      "Client Signature: ________________________  Date: ______________",
+      margin,
+      yPosition
+    );
+    yPosition += 15;
+    doc.text(
+      "Caterer Signature: ______________________  Date: ______________",
+      margin,
+      yPosition
+    );
+
+    // // Footer
     // const footer = `Signed by: ${clientName} (Client) - ${eventDate}`;
     // doc.text(footer, 10, doc.internal.pageSize.height - 10);
 

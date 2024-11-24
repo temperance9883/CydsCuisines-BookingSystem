@@ -7,7 +7,8 @@ export default function Customers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     phone_number: "",
     email: "",
   });
@@ -32,11 +33,6 @@ export default function Customers() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewCustomer((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleAddOrUpdateCustomer = async (e) => {
     e.preventDefault();
     const url = editMode
@@ -44,13 +40,18 @@ export default function Customers() {
       : "http://localhost:5000/customers";
     const method = editMode ? "PUT" : "POST";
 
+    const customerToSend = {
+      ...newCustomer,
+      name: `${newCustomer.first_name} ${newCustomer.last_name}`,
+    };
+
     try {
       const response = await fetch(url, {
         method: method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCustomer),
+        body: JSON.stringify(customerToSend),
       });
 
       if (!response.ok) {
@@ -70,19 +71,25 @@ export default function Customers() {
       }
 
       await fetchCustomers();
-
-      closeModal(); // Close the modal after success
+      closeModal();
     } catch (error) {
       setError(error.message);
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewCustomer((prev) => ({ ...prev, [name]: value }));
+  };
+
   const openModal = (customer = null) => {
     if (customer) {
+      const [first_name, last_name] = customer.name.split(" ");
       setEditMode(true);
       setEditingCustomerId(customer.customer_id);
       setNewCustomer({
-        name: customer.name,
+        first_name: first_name || "",
+        last_name: last_name || "",
         phone_number: customer.phone_number,
         email: customer.email,
       });
@@ -102,7 +109,8 @@ export default function Customers() {
 
   const resetNewCustomer = () => {
     setNewCustomer({
-      name: "",
+      first_name: "",
+      last_name: "",
       phone_number: "",
       email: "",
     });
@@ -208,14 +216,22 @@ export default function Customers() {
         <div className="space-y-4">
           <input
             type="text"
-            name="name"
-            value={newCustomer.name}
+            name="first_name"
+            value={newCustomer.first_name}
             onChange={handleInputChange}
-            placeholder="Name"
+            placeholder="First Name"
             className="p-2 border rounded w-full"
           />
           <input
             type="text"
+            name="last_name"
+            value={newCustomer.last_name}
+            onChange={handleInputChange}
+            placeholder="Last Name"
+            className="p-2 border rounded w-full"
+          />
+          <input
+            type="tel"
             name="phone_number"
             value={newCustomer.phone_number}
             onChange={handleInputChange}

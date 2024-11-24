@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import CateringBidModal from "./CateringBidModel";
 import MealPrepBidModal from "./MealPrepBidModel";
 import GenerateContract from "./GenerateContract";
-import EditBidModal from "./EditBidModal.jsx";
-
+import EditCateringBidModal from "./EditBidModal.jsx";
+import EditMealPrepBidModal from "./EditMealPrepModal.jsx";
 const BidTable = ({
   bids,
   type,
@@ -110,7 +110,8 @@ export default function BidComponent() {
   const [customers, setCustomers] = useState([]);
   const [isCateringModalOpen, setIsCateringModalOpen] = useState(false);
   const [isMealPrepModalOpen, setIsMealPrepModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditCateringModalOpen, setIsEditCateringModalOpen] = useState(false);
+  const [isEditMealPrepModalOpen, setIsEditMealPrepModalOpen] = useState(false);
   const [selectedBid, setSelectedBid] = useState(null);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [bids, setBids] = useState([]);
@@ -185,16 +186,23 @@ export default function BidComponent() {
   };
 
   // Open the bid edit modal
-  const handleEditBid = (bid) => {
+  const handleEditCateringBid = (bid) => {
     setSelectedBid(bid);
-    setIsEditModalOpen(true);
+    setIsEditCateringModalOpen(true);
+    setIsContractModalOpen(false);
+  };
+
+  const handleEditMealBid = (bid) => {
+    setSelectedBid(bid);
+    setIsEditMealPrepModalOpen(true);
     setIsContractModalOpen(false);
   };
 
   const handleClose = () => {
     setIsCateringModalOpen(false);
     setIsMealPrepModalOpen(false);
-    setIsEditModalOpen(false);
+    setIsEditCateringModalOpen(false);
+    setIsEditMealPrepModalOpen(false);
     setIsContractModalOpen(false);
   };
 
@@ -217,7 +225,7 @@ export default function BidComponent() {
         type="Catering"
         customers={customers}
         onSelectBid={handleSelectBid}
-        onEditBid={handleEditBid}
+        onEditBid={handleEditCateringBid}
         onCreateContract={handleCreateContract}
         setIsCateringModalOpen={setIsCateringModalOpen}
         setIsMealPrepModalOpen={setIsMealPrepModalOpen}
@@ -229,7 +237,7 @@ export default function BidComponent() {
         type="Meal Prep"
         customers={customers}
         onSelectBid={handleSelectBid}
-        onEditBid={handleEditBid}
+        onEditBid={handleEditMealBid}
         onCreateContract={handleCreateContract}
         setIsCateringModalOpen={setIsCateringModalOpen}
         setIsMealPrepModalOpen={setIsMealPrepModalOpen}
@@ -237,10 +245,21 @@ export default function BidComponent() {
       />
 
       {/* Modals */}
-      {isEditModalOpen && (
-        <EditBidModal
-          isOpen={isEditModalOpen}
-          setIsOpen={setIsEditModalOpen}
+      {isEditCateringModalOpen && (
+        <EditCateringBidModal
+          isOpen={isEditCateringModalOpen}
+          onClose={handleClose}
+          setIsOpen={setIsEditCateringModalOpen}
+          bid={selectedBid}
+          onSaveBid={handleCreateBid}
+        />
+      )}
+
+      {isEditMealPrepModalOpen && (
+        <EditMealPrepBidModal
+          isOpen={isEditMealPrepModalOpen}
+          onClose={handleClose}
+          setIsOpen={setIsEditMealPrepModalOpen}
           bid={selectedBid}
           onSaveBid={handleCreateBid}
         />

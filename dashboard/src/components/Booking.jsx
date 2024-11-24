@@ -117,8 +117,8 @@ export default function Booking() {
       return;
     }
 
-    // Log the existing bookings and the times to debug
-    console.log("Fetched events:", bookings);
+    // Debugging logs
+    console.log("Fetched bookings:", bookings);
     console.log(
       "New booking start:",
       combinedStartTime,
@@ -126,27 +126,35 @@ export default function Booking() {
       combinedEndTime
     );
 
-    // Check for overlap
-    const isOverlapping = bookings.some((booking) => {
-      const existingStart = new Date(booking.start_time); // Make sure this is a Date object
-      const existingEnd = new Date(booking.end_time); // Make sure this is a Date object
+    // Check for overlap or exact match
+    const isConflict = bookings.some((booking) => {
+      const existingStart = new Date(booking.start_time).getTime();
+      const existingEnd = new Date(booking.end_time).getTime();
+      const newStart = new Date(combinedStartTime).getTime();
+      const newEnd = new Date(combinedEndTime).getTime();
 
-      // Log to debug the time comparisons
-      console.log("Comparing to existing booking:", existingStart, existingEnd);
-
-      // Check if the new booking overlaps with any existing booking
-      return (
-        new Date(combinedStartTime) < existingEnd &&
-        new Date(combinedEndTime) > existingStart
+      console.log(
+        "Checking overlap:",
+        { existingStart, existingEnd },
+        { newStart, newEnd }
       );
+
+      const isOverlapping = newStart < existingEnd && newEnd > existingStart;
+      const isExactMatch = newStart === existingStart && newEnd === existingEnd;
+
+      if (isOverlapping || isExactMatch) {
+        alert(
+          isOverlapping
+            ? "This booking overlaps with an existing one. Please choose a different time."
+            : "This booking has the exact same start and end time as an existing one."
+        );
+        return true;
+      }
+
+      return false;
     });
 
-    if (isOverlapping) {
-      alert(
-        "This booking overlaps with an existing one. Please choose a different time."
-      );
-      return; // Do not submit the booking if there is an overlap
-    }
+    if (isConflict) return;
 
     const formattedData = {
       ...formData,
@@ -160,25 +168,12 @@ export default function Booking() {
         formattedData
       );
       setBookings((prevBookings) => [...prevBookings, response.data]);
-      setFormData({
-        requested_date: "",
-        event_location: "",
-        event_type: "",
-        customer_id: "",
-        number_of_guests: "",
-        bid_status: "Pending",
-        user_id: "",
-        service_type: "",
-        start_time: "",
-        end_time: "",
-      });
-      setShowForm(false);
+      resetForm();
     } catch (error) {
       console.error("Error saving booking:", error);
     }
   };
 
-  // Combine date and time function
   function combineDateAndTime(dateString, timeString) {
     if (!timeString) {
       console.error("Time string is undefined or empty");
@@ -201,6 +196,23 @@ export default function Booking() {
     return new Date(
       date.getTime() - date.getTimezoneOffset() * 60000
     ).toISOString();
+  }
+
+  // Reset form function
+  function resetForm() {
+    setFormData({
+      requested_date: "",
+      event_location: "",
+      event_type: "",
+      customer_id: "",
+      number_of_guests: "",
+      bid_status: "Pending",
+      user_id: "",
+      service_type: "",
+      start_time: "",
+      end_time: "",
+    });
+    setShowForm(false);
   }
 
   // Handle editing a booking
