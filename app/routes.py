@@ -75,6 +75,29 @@ def edit_customer(customer_id):
 
 #fetch all bids
 # Route to fetch all meal prep bids
+@main.route('/meal_prep_bids', methods=['GET'])
+def get_meal_prep_bids():
+    meal_prep_bids = MealPrepBid.query.all()
+    
+    # Serialize the meal prep bids
+    meal_prep_bids_list = [
+        {
+            'meal_bid_id': bid.meal_bid_id,
+            'created_at': bid.created_at.isoformat(),
+            'bid_status': bid.bid_status,
+            'miles': bid.miles,
+            'service_fee': str(bid.service_fee),
+            'estimated_groceries': str(bid.estimated_groceries),
+            'estimated_bid_price': str(bid.estimated_bid_price),
+            'supplies': str(bid.supplies),
+            'booking_id': bid.booking_id,
+            'customer_id': bid.customer_id
+        } for bid in meal_prep_bids
+    ]
+
+    return jsonify(meal_prep_bids_list), 200
+
+# Route to fetch all catering bids
 @main.route('/catering_bids', methods=['GET'])
 def get_catering_bids():
     catering_bids = CateringBid.query.all()
@@ -83,12 +106,12 @@ def get_catering_bids():
     catering_bids_list = [
         {
             'catering_bid_id': bid.catering_bid_id,
-            'created_at': bid.created_at.isoformat() if bid.created_at else None,
+            'created_at': bid.created_at.isoformat(),
             'bid_status': bid.bid_status,
             'miles': bid.miles,
             'service_fee': str(bid.service_fee),
-            'clean_up': bid.clean_up,
-            'decorations': bid.decorations,
+            'clean_up': str(bid.clean_up),
+            'decorations': str(bid.decorations),
             'estimated_groceries': str(bid.estimated_groceries),
             'foods': bid.foods,
             'estimated_bid_price': str(bid.estimated_bid_price),
@@ -99,35 +122,15 @@ def get_catering_bids():
 
     return jsonify(catering_bids_list), 200
 
-@main.route('/meal_prep_bids', methods=['GET'])
-def get_meal_prep_bids():
-    meal_prep_bids = MealPrepBid.query.all()
-    
-    # Serialize the meal prep bids
-    meal_prep_bids_list = [
-        {
-            'meal_bid_id': bid.meal_bid_id,
-            'created_at': bid.created_at.isoformat() if bid.created_at else None,
-            'bid_status': bid.bid_status,
-            'miles': bid.miles,
-            'service_fee': str(bid.service_fee),
-            'estimated_groceries': str(bid.estimated_groceries),
-            'supplies': str(bid.supplies),
-            'booking_id': bid.booking_id,
-            'customer_id': bid.customer_id,
-            'foods': bid.foods,
-            'estimated_bid_price': str(bid.estimated_bid_price),
-        } for bid in meal_prep_bids
-    ]
-
-    return jsonify(meal_prep_bids_list), 200
 # Create a new bid based on service type
 
 # PUT route to update a Meal Prep bid
 @main.route('/meal_prep_bids/<int:meal_bid_id>', methods=['PUT'])
 def update_meal_prep_bid(meal_bid_id):
     data = request.json
-    bid = MealPrepBid.query.get(meal_bid_id)
+
+    # Retrieve the bid using both primary keys (assuming MealPrepBid has a composite primary key)
+    bid = MealPrepBid.query.filter_by(meal_bid_id=meal_bid_id).first()
 
     if not bid:
         return jsonify({'error': 'Meal Prep Bid not found'}), 404
@@ -137,13 +140,13 @@ def update_meal_prep_bid(meal_bid_id):
     bid.miles = data.get('miles', bid.miles)
     bid.service_fee = data.get('service_fee', bid.service_fee)
     bid.estimated_groceries = data.get('estimated_groceries', bid.estimated_groceries)
+    bid.estimated_bid_price = data.get('estimated_bid_price', bid.estimated_bid_price)
     bid.supplies = data.get('supplies', bid.supplies)
     bid.booking_id = data.get('booking_id', bid.booking_id)
 
-    # Assign customer information
+    # Assign customer information if provided
     customer_name = data.get('customer_name')
     if customer_name:
-        # Assuming you have a Customer model and can retrieve customer information by name
         customer = Customer.query.filter_by(name=customer_name).first()
         if customer:
             bid.customer_id = customer.id
@@ -153,10 +156,12 @@ def update_meal_prep_bid(meal_bid_id):
     try:
         db.session.commit()
         return jsonify(bid.to_dict()), 200
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
-        return jsonify({'error': 'Failed to update meal prep bid'}), 400
-
+        return jsonify({'error': f'Failed to update meal prep bid: {str(e)}'}), 400
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+    
 # PUT route to update a Catering bid
 @main.route('/catering_bids/<int:catering_bid_id>', methods=['PUT'])
 def update_catering_bid(catering_bid_id):
@@ -186,13 +191,6 @@ def update_catering_bid(catering_bid_id):
 @main.route('/meal_prep_bids', methods=['POST'])
 def create_meal_prep_bid():
     data = request.json
-    print("Received data:", data) 
-    required_fields = ['customer_id', 'bid_status', 'miles', 'supplies', 
-                       'estimated_groceries', 'foods', 'estimated_bid_price','booking_id']
-    missing_fields = [field for field in required_fields if field not in data]
-    
-    if missing_fields:
-        return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
 
     # Create a new MealPrepBid instance
     new_bid = MealPrepBid(
@@ -200,10 +198,8 @@ def create_meal_prep_bid():
         miles=data['miles'],
         service_fee=data['service_fee'],
         estimated_groceries=data['estimated_groceries'],
-        estimated_bid_price=data['estimated_bid_price'],
         supplies=data.get('supplies', 0),  # Default to 0 if not provided
         booking_id=data['booking_id'],
-        foods=data['foods'],
         customer_id=data['customer_id']
     )
 
@@ -220,24 +216,14 @@ def create_meal_prep_bid():
 def create_catering_bid():
     data = request.json
 
-    # Validate required fields
-    required_fields = ['customer_id', 'bid_status', 'miles', 'service_fee', 
-                       'estimated_groceries', 'foods', 'estimated_bid_price','decorations','booking_id']
-    missing_fields = [field for field in required_fields if field not in data]
-    
-    if missing_fields:
-        return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-
     # Create a new CateringBid instance
     new_bid = CateringBid(
         bid_status=data['bid_status'],
         miles=data['miles'],
         service_fee=data['service_fee'],
-        clean_up=data.get('clean_up'),
-        decorations=data.get('decorations'),
+        clean_up=data.get('clean_up', False),
+        decorations=data.get('decorations', False),
         estimated_groceries=data['estimated_groceries'],
-        foods=data['foods'],
-        estimated_bid_price=data['estimated_bid_price'],
         booking_id=data['booking_id'],
         customer_id=data['customer_id']
     )
@@ -249,6 +235,8 @@ def create_catering_bid():
     except IntegrityError:
         db.session.rollback()
         return jsonify({'error': 'Failed to create catering bid'}), 400
+
+
 
 
 # Fetch all bookings
@@ -276,6 +264,10 @@ def get_booking(booking_id):
 
     # If booking is found, return it in JSON format
     if booking:
+        # Strip timezone info if it's present
+        start_time = booking.start_time.replace(tzinfo=None) if booking.start_time else None
+        end_time = booking.end_time.replace(tzinfo=None) if booking.end_time else None
+        
         return jsonify({
             'booking_id': booking.booking_id,
             'requested_date': booking.requested_date.isoformat(),
@@ -284,12 +276,11 @@ def get_booking(booking_id):
             'customer_id': booking.customer_id,
             'number_of_guests': booking.number_of_guests,
             'bid_status': booking.bid_status,
-            'start_time': booking.start_time.isoformat() if booking.start_time else None,  
-            'end_time': booking.end_time.isoformat() if booking.end_time else None,
+            'start_time': start_time.isoformat() if start_time else None,  
+            'end_time': end_time.isoformat() if end_time else None,
             'service_type': booking.service_type,
         })
     else:
-        # If booking with the given id is not found
         return jsonify({"error": "Booking not found"}), 404
 
     
@@ -458,11 +449,34 @@ def get_calendar_events():
         'created_at': event.created_at.isoformat() if event.created_at else None,
         'event_date': event.event_date.isoformat() if event.event_date else None,
         'event_status': event.event_status,
+        'customer_id': event.booking.customer_id if event.booking else None ,
         'event_type': event.event_type,
         'booking_id': event.booking_id,
         'start_time': event.start_time.isoformat() if event.start_time else None,  # Include start_time
         'end_time': event.end_time.isoformat() if event.end_time else None  # Include end_time
     } for event in events])
+
+# Fetch a specific event by booking_id
+@main.route('/calendar/<int:booking_id>', methods=['GET'])
+def get_calendar_event(booking_id):
+    # Query the event using booking_id
+    event = Calendar.query.filter_by(booking_id=booking_id).first()
+    
+    if event is None:
+        return jsonify({'error': 'Event not found.'}), 404
+
+    # Return the event data as JSON
+    return jsonify({
+        'event_id': event.event_id,
+        'created_at': event.created_at.isoformat() if event.created_at else None,
+        'event_date': event.event_date.isoformat() if event.event_date else None,
+        'event_status': event.event_status,
+        'customer_id': event.booking.customer_id if event.booking else None,
+        'event_type': event.event_type,
+        'booking_id': event.booking_id,
+        'start_time': event.start_time.isoformat() if event.start_time else None,
+        'end_time': event.end_time.isoformat() if event.end_time else None
+    }), 200
 
 
 # Add event to calendar
