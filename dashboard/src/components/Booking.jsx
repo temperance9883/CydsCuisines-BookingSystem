@@ -33,11 +33,16 @@ export default function Booking() {
     axios
       .get("http://127.0.0.1:5000/bookings")
       .then((response) => {
-        const formattedBookings = response.data.map((booking) => ({
-          ...booking,
-          start_time: new Date(booking.start_time),
-          end_time: new Date(booking.end_time),
-        }));
+        const formattedBookings = response.data.map((booking) => {
+          // Get today's date in YYYY-MM-DD format
+          const today = new Date().toISOString().split("T")[0];
+
+          // Combine the date with the time from the backend
+          const start_time = new Date(`${today}T${booking.start_time}`);
+          const end_time = new Date(`${today}T${booking.end_time}`);
+
+          return { ...booking, start_time, end_time };
+        });
         setBookings(formattedBookings);
         setLoading(false);
       })
@@ -61,100 +66,70 @@ export default function Booking() {
     }));
   };
 
+  // Combine date and time into an ISO string
   function combineDateAndTime(dateString, timeString) {
     if (!timeString) {
       console.error("Time string is undefined or empty");
+      alert("Please provide a valid time.");
       return null;
     }
 
-    const date = new Date(dateString);
+    const date = new Date(dateString); // Create date from input date string
     const [hours, minutes] = timeString.split(":");
-    const period = timeString.toLowerCase().includes("pm") ? "pm" : "am";
 
-    const isPM = period === "pm";
     let hour = parseInt(hours, 10);
+    let minute = parseInt(minutes, 10);
+
+    const isPM = timeString.toLowerCase().includes("pm");
     if (isPM && hour < 12) hour += 12;
     if (!isPM && hour === 12) hour -= 12;
 
-    date.setHours(hour);
-    date.setMinutes(parseInt(minutes, 10));
-    date.setSeconds(0);
+    date.setUTCHours(hour); // Set hours in UTC
+    date.setUTCMinutes(minute); // Set minutes in UTC
+    date.setUTCSeconds(0); // Reset seconds
 
-    return new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    ).toISOString();
+    return date.toISOString(); // Return in ISO string format (UTC)
   }
 
   // Function to check if the new booking overlaps with existing ones
-  const isOverlapping = (startTime, endTime) => {
-    return bookings.some(
-      (booking) =>
-        startTime < new Date(booking.end_time) &&
-        endTime > new Date(booking.start_time)
-    );
+  // Function to check if the new booking overlaps with existing ones
+  const isOverlapping = (newStartTime, newEndTime, bookings) => {
+    const newStart = new Date(newStartTime);
+    const newEnd = new Date(newEndTime);
+
+    return bookings.some((booking) => {
+      const existingStart = new Date(booking.start_time);
+      const existingEnd = new Date(booking.end_time);
+
+      return newStart < existingEnd && newEnd > existingStart;
+    });
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.start_time || !formData.end_time) {
-      console.error("Start time or end time is missing");
+    const { requested_date, start_time, end_time } = formData;
+
+    // Validate input
+    if (!requested_date || !start_time || !end_time) {
+      alert("Please fill out all required fields.");
       return;
     }
 
-    const combinedStartTime = combineDateAndTime(
-      formData.requested_date,
-      formData.start_time
-    );
-    const combinedEndTime = combineDateAndTime(
-      formData.requested_date,
-      formData.end_time
-    );
+    const combinedStartTime = combineDateAndTime(requested_date, start_time);
+    const combinedEndTime = combineDateAndTime(requested_date, end_time);
 
     if (!combinedStartTime || !combinedEndTime) {
-      console.error("Failed to combine date and time.");
       return;
     }
 
-    // Debugging logs
-    console.log("Fetched bookings:", bookings);
-    console.log(
-      "New booking start:",
-      combinedStartTime,
-      "end:",
-      combinedEndTime
-    );
-
-    // Check for overlap or exact match
-    const isConflict = bookings.some((booking) => {
-      const existingStart = new Date(booking.start_time).getTime();
-      const existingEnd = new Date(booking.end_time).getTime();
-      const newStart = new Date(combinedStartTime).getTime();
-      const newEnd = new Date(combinedEndTime).getTime();
-
-      console.log(
-        "Checking overlap:",
-        { existingStart, existingEnd },
-        { newStart, newEnd }
+    if (isOverlapping(combinedStartTime, combinedEndTime, bookings)) {
+      alert(
+        "This booking overlaps with an existing booking. Please choose a different time."
       );
-
-      const isOverlapping = newStart < existingEnd && newEnd > existingStart;
-      const isExactMatch = newStart === existingStart && newEnd === existingEnd;
-
-      if (isOverlapping || isExactMatch) {
-        alert(
-          isOverlapping
-            ? "This booking overlaps with an existing one. Please choose a different time."
-            : "This booking has the exact same start and end time as an existing one."
-        );
-        return true;
-      }
-
-      return false;
-    });
-
-    if (isConflict) return;
+      return;
+    }
 
     const formattedData = {
       ...formData,
@@ -174,46 +149,29 @@ export default function Booking() {
     }
   };
 
-  function combineDateAndTime(dateString, timeString) {
-    if (!timeString) {
-      console.error("Time string is undefined or empty");
-      return null;
+  // Function to handle updating a booking status (Pending, Confirmed, Completed)
+  const updateCalendar = async (bookingId, newStatus) => {
+    try {
+      // Update the booking status on the backend
+      const updatedBooking = await axios.put(
+        `http://localhost:5000/bookings/${bookingId}`,
+        { bid_status: newStatus }
+      );
+
+      // Update the bookings state to reflect the new status
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
+          booking.booking_id === bookingId
+            ? { ...booking, bid_status: newStatus }
+            : booking
+        )
+      );
+      alert(`Booking status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      alert("Failed to update booking status.");
     }
-
-    const date = new Date(dateString);
-    const [hours, minutes] = timeString.split(":");
-    const period = timeString.toLowerCase().includes("pm") ? "pm" : "am";
-
-    const isPM = period === "pm";
-    let hour = parseInt(hours, 10);
-    if (isPM && hour < 12) hour += 12;
-    if (!isPM && hour === 12) hour -= 12;
-
-    date.setHours(hour);
-    date.setMinutes(parseInt(minutes, 10));
-    date.setSeconds(0);
-
-    return new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    ).toISOString();
-  }
-
-  // Reset form function
-  function resetForm() {
-    setFormData({
-      requested_date: "",
-      event_location: "",
-      event_type: "",
-      customer_id: "",
-      number_of_guests: "",
-      bid_status: "Pending",
-      user_id: "",
-      service_type: "",
-      start_time: "",
-      end_time: "",
-    });
-    setShowForm(false);
-  }
+  };
 
   // Handle editing a booking
   const handleEdit = (booking) => {
@@ -235,6 +193,23 @@ export default function Booking() {
       alert("Failed to delete booking.");
     }
   };
+
+  // Reset form function
+  function resetForm() {
+    setFormData({
+      requested_date: "",
+      event_location: "",
+      event_type: "",
+      customer_id: "",
+      number_of_guests: "",
+      bid_status: "Pending",
+      user_id: "",
+      service_type: "",
+      start_time: "",
+      end_time: "",
+    });
+    setShowForm(false);
+  }
 
   return (
     <div>

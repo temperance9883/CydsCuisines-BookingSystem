@@ -46,11 +46,35 @@ export default function EditMealPrepBidModal({ onClose, onSaveBid, bid }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Set the created_at field to the current timestamp
-    const updatedBid = {
+    const createdAt = new Date().toISOString();
+
+    console.log("Booking object:", booking);
+
+    // Find the booking object that matches the bookingId
+    const selectedBooking = booking.find((b) => b.booking_id === bookingId);
+
+    if (!selectedBooking) {
+      console.error("No matching booking found for bookingId:", bookingId);
+      return; // Exit early if no match is found
+    }
+
+    console.log("Selected booking:", selectedBooking);
+
+    // Validate start_time and end_time
+    if (
+      selectedBooking.start_time !== booking?.start_time ||
+      selectedBooking.end_time !== booking?.end_time
+    ) {
+      console.error(
+        `Mismatch in times! Start or End time does not match for bookingId: ${bookingId}`
+      );
+      return; // Exit early if times do not match
+    }
+
+    const newBid = {
       meal_bid_id: mealBidId,
-      customer_id: customer, // Use the provided `customer`
-      created_at: new Date().toISOString(), // Automatically set created_at
+      customer_id: customer,
+      created_at: createdAt,
       bid_status: bidStatus,
       miles: miles,
       service_fee: serviceFee,
@@ -59,31 +83,82 @@ export default function EditMealPrepBidModal({ onClose, onSaveBid, bid }) {
       estimated_bid_price: estimatedBidPrice,
       supplies: supplies,
       booking_id: bookingId,
+      start_time: booking?.start_time, // Use the existing start_time from booking
+      end_time: booking?.end_time, // Use the existing end_time from booking
     };
 
+    console.log("Sending bid data:", newBid);
+
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/meal_prep_bids/${bid.meal_bid_id}`,
-        {
-          method: "PUT",
+      let response;
+      if (mealBidId) {
+        console.log("Updating bid with ID:", mealBidId);
+
+        response = await fetch(
+          `http://127.0.0.1:5000/meal_prep_bids/${mealBidId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBid),
+          }
+        );
+      } else {
+        console.log("Creating new bid");
+
+        response = await fetch("http://127.0.0.1:5000/meal_prep_bids", {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedBid),
-        }
-      );
+          body: JSON.stringify(newBid),
+        });
+      }
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Bid updated:", data);
-        onSaveBid(data); // Pass the updated bid to parent
-        onClose(); // Close the modal
+        console.log("Bid saved or updated:", data);
+
+        const eventId = data.booking_id;
+        console.log("Event ID for calendar update:", eventId);
+
+        if (eventId) {
+          const calendarData = {
+            event_status: bidStatus,
+            event_type: booking?.event_type || selectedBooking.event_type,
+            event_date: booking?.event_date || selectedBooking.event_date, // Ensure event_date is included
+            start_time: booking?.start_time,
+            end_time: booking?.end_time,
+          };
+
+          console.log("Updating calendar event with data:", calendarData);
+
+          const calendarResponse = await fetch(
+            `http://127.0.0.1:5000/calendar/${eventId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(calendarData),
+            }
+          );
+
+          if (calendarResponse.ok) {
+            console.log("Calendar event updated successfully.");
+          } else {
+            console.error("Error updating calendar event.");
+          }
+        }
+
+        onSaveBid(data);
+        onClose();
       } else {
-        const errorData = await response.json();
-        console.error("Failed to update bid:", errorData);
+        console.error("Error saving or updating bid");
       }
     } catch (error) {
-      console.error("Error during bid update:", error);
+      console.error("Error submitting bid:", error);
     }
   };
 
@@ -182,7 +257,7 @@ export default function EditMealPrepBidModal({ onClose, onSaveBid, bid }) {
               className="border border-gray-300 rounded-md p-2 w-full mt-1"
             />
           </label>
-          <label className="block mb-2">
+          {/* <label className="block mb-2">
             Booking Event:
             <input
               type="text"
@@ -191,7 +266,7 @@ export default function EditMealPrepBidModal({ onClose, onSaveBid, bid }) {
               required
               className="border border-gray-300 rounded-md p-2 w-full mt-1"
             />
-          </label>
+          </label> */}
           <div className="flex justify-end mt-4 space-x-2">
             <button
               type="submit"

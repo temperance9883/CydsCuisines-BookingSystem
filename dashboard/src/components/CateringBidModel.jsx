@@ -249,6 +249,13 @@ export default function CateringBidModal({ onClose, onSaveBid }) {
             <button
               type="button"
               className="bg-blue-500 text-white rounded-md px-4 py-2 sm:mr-4 mb-2 sm:mb-0"
+              onClick={calculateBidPrice}
+            >
+              Calculate estimated bid
+            </button>
+            <button
+              type="button"
+              className="bg-blue-500 text-white rounded-md px-4 py-2 sm:mr-4 mb-2 sm:mb-0"
               onClick={onClose}
             >
               Cancel

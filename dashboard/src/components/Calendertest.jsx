@@ -67,11 +67,12 @@ export default function BookingCalendar() {
 
   const eventPropGetter = (event) => {
     let backgroundColor;
-    if (event.event_status === "confirmed") {
+    const status = event.event_status?.toLowerCase(); // Handle null/undefined safely
+    if (status === "confirmed") {
       backgroundColor = "green";
-    } else if (event.event_status === "pending") {
-      backgroundColor = "yellow";
-    } else if (event.event_status === "completed") {
+    } else if (status === "pending") {
+      backgroundColor = "orange";
+    } else if (status === "completed") {
       backgroundColor = "blue";
     }
     return { style: { backgroundColor, color: "white", borderRadius: "5px" } };

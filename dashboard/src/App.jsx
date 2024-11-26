@@ -1,10 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate, // Import useNavigate hook
-} from "react-router-dom";
+import { useState } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import Customers from "./components/Customers";
 import Navbar from "./components/Navbar";
@@ -12,10 +7,11 @@ import BidComponent from "./components/Bids";
 import Booking from "./components/Booking";
 import Home from "./components/Home";
 import Support from "./components/Support";
+import ForgotPage from "./components/ForgotPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate(); // Get the navigate function from useNavigate
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     setIsAuthenticated(true); // User successfully logged in
@@ -28,7 +24,7 @@ function App() {
 
   return (
     <div>
-      {/* Render Navbar only if authenticated and NOT on Home page */}
+      {/* Render Navbar only if authenticated */}
       {isAuthenticated && (
         <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
       )}
@@ -37,6 +33,11 @@ function App() {
       <Routes>
         {/* Login Route */}
         <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+
+        {/* Non-authenticated route for Forgot Password */}
+        {!isAuthenticated && (
+          <Route path="/forgotpass" element={<ForgotPage />} />
+        )}
 
         {/* Protected Routes */}
         <Route
@@ -60,8 +61,8 @@ function App() {
           element={isAuthenticated ? <Support /> : <Navigate to="/" />}
         />
 
-        {/* Catch-all route to redirect to /home if route doesn't exist */}
-        <Route path="*" element={<Navigate to="/home" />} />
+        {/* Catch-all route */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );

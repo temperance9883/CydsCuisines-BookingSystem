@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
-export default function LoginPage({ onLogin }) {
+import { useNavigate } from "react-router-dom";
+export default function LoginPage({ onLogin, isAuthenticated }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -45,7 +44,6 @@ export default function LoginPage({ onLogin }) {
           "linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('/goldflower.avif')",
       }}
     >
-      {/* Header at the top */}
       <header className="text-center mb-10 flex flex-col bg-black w-full px-8 max-w-screen-xl mx-auto fixed top-0 left-0 right-0 z-10">
         <h1 className="text-[#d4af37] text-4xl mb-2">Cyd's Cuisines</h1>
         <h2 className="text-[#d4af37] text-2xl">Booking Management Site</h2>
@@ -88,14 +86,16 @@ export default function LoginPage({ onLogin }) {
             Login
           </button>
 
-          <div className="mt-4">
-            <Link
-              to="/forgotpass"
-              className="block w-4/5 bg-black text-[#DDC8A6] p-2 rounded-md text-center hover:bg-[#DDC8A6] hover:text-black transition duration-300"
-            >
-              Forgot Password?
-            </Link>
-          </div>
+          {!isAuthenticated && (
+            <div className="mt-4">
+              <Link
+                to="/forgotpass"
+                className="block w-4/5 bg-black text-[#DDC8A6] p-2 rounded-md text-center hover:bg-[#DDC8A6] hover:text-black transition duration-300"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+          )}
         </form>
       </section>
 

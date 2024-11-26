@@ -2,8 +2,8 @@ import React from "react";
 
 export default function ForgotPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-cover bg-fixed bg-center bg-[url('/path-to-your-background.jpg')] bg-white/30 backdrop-blur-sm">
-      <header className="text-center mb-4">
+    <div className="flex flex-col items-center justify-center h-screen bg-cover bg-fixed bg-center bg-[url('/goldflower.avif')] bg-white/30 backdrop-blur-sm">
+      <header className="text-center px-12 py-4 bg-black/80 shadow-md fixed top-0 z-10">
         <h1 className="text-gold text-3xl font-serif mb-1">
           Password Recovery
         </h1>

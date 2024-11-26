@@ -152,13 +152,17 @@ export default function BidComponent() {
   }, []);
 
   // Handle bid selection
-  const handleSelectBid = async (bid, customerId) => {
+  const handleSelectBid = async (bid, customerId, newStatus) => {
     if (!customerId) {
       alert("Please select a client for this bid.");
       return;
     }
 
-    const updatedBid = { ...bid, customer_id: customerId };
+    const updatedBid = {
+      ...bid,
+      customer_id: customerId,
+      bid_status: newStatus,
+    };
 
     const url = `http://127.0.0.1:5000/${
       bid.bid_type === "Catering" ? "catering_bids" : "mealprep_bids"
@@ -176,6 +180,7 @@ export default function BidComponent() {
       if (response.ok) {
         alert("Bid updated successfully!");
         fetchBids(); // Refetch bids after update
+        updateCalendar(newStatus, bid); // Update calendar when bid status changes
       } else {
         alert("Error updating the bid.");
       }
