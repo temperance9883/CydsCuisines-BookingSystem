@@ -67,6 +67,7 @@ export default function BookingCalendar() {
     console.log("Selected event:", event);
   };
 
+
   const eventPropGetter = (event) => {
     let backgroundColor;
     const status = event.event_status?.toLowerCase(); // Handle null/undefined safely
@@ -198,10 +199,14 @@ export default function BookingCalendar() {
     }
   };
 
+
+
+
+
   return (
     <div className="flex mt-10 justify-center h-screen p-5">
       <div className="w-full max-w-4xl">
-        <h1 className="text-2xl font-bold mb-4 text-center">Event Calendar</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center ">Event Calendar</h1>
 
         {error && (
           <div className="bg-red-500 text-white p-3 mb-4 rounded-md">
@@ -209,19 +214,30 @@ export default function BookingCalendar() {
           </div>
         )}
 
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-          eventPropGetter={eventPropGetter}
-          onSelectEvent={handleSelectEvent}
-        />
+<Calendar
+  localizer={localizer}
+  events={events}
+  startAccessor="start"
+  endAccessor="end"
+  style={{
+    height: 500,
+    borderRadius: "20px",
+    boxShadow: "10px 4px 8px rgba(0, 0, 0, 0.1)",}}
+  eventPropGetter={eventPropGetter}
+  onSelectEvent={handleSelectEvent}
+/>
+
 
         {selectedEvent && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-5 max-w-sm w-full">
+            <div className="bg-white rounded-lg shadow-lg p-5 max-w-sm w-full"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("/goldpaper.jpg")`, // Correctly references the image
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+            >
               <h2 className="text-xl font-semibold mb-2">
                 Edit Booking for{" "}
                 {moment(selectedEvent.start).format("MM/DD/YYYY")}
@@ -312,19 +328,21 @@ export default function BookingCalendar() {
               <div className="flex justify-between">
                 <button
                   onClick={handleSave}
-                  className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                  className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-600"
                 >
                   Save Changes
                 </button>
+
                 <button
                   onClick={() => setSelectedEvent(null)}
-                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                 >
                   Close
                 </button>
+
                 <button
                   onClick={handleDelete}
-                  className="mt-4 bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800"
+                  className="mt-4 bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-200"
                 >
                   Delete Event
                 </button>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import moment from "moment";
 
 const BookingForm = ({
   formData,
@@ -10,9 +9,6 @@ const BookingForm = ({
   setBookings,
 }) => {
   const [customers, setCustomers] = useState([]);
-  const [bookings, setBookingsState] = useState([]); // State to hold existing bookings
-  const [errors, setErrors] = useState({}); // For handling errors
-  
 
   // Fetch customers from API
   useEffect(() => {
@@ -24,105 +20,24 @@ const BookingForm = ({
       .catch((error) => {
         console.error("Error fetching customers:", error);
       });
-
-    // Fetch bookings from API
-    axios
-      .get("http://localhost:5000/bookings") // Adjust endpoint for bookings API
-      .then((response) => {
-        setBookingsState(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching bookings:", error);
-      });
   }, []);
 
   const handleClose = () => {
-    setShowForm(false);
-    setBookings([]); // Optional: Reset bookings if desired
+    setShowForm(false); // Close the form
+    resetForm(); // Reset the form data
   };
-
-  const validateForm = () => {
-    let formErrors = {};
-  
-    // Check required fields
-    if (!formData.requested_date_from) {
-      formErrors.requested_date = "Please select a date.";
-    }
-    if (formData.end_time <= formData.start_time) {
-      formErrors.time = "End time must be later than start time.";
-    }
-  
-    // Convert input data to comparable date-time objects
-    const newStart = moment(
-      `${formData.requested_date_from}T${formData.start_time}`,
-      "YYYY-MM-DDTHH:mm"
-    );
-    const newEnd = moment(
-      `${formData.requested_date_from}T${formData.end_time}`,
-      "YYYY-MM-DDTHH:mm"
-    );
-  
-    // Check for overlaps in existing bookings
-    const isOverlapping = bookings.some((booking) => {
-      const existingStart = moment(
-        `${booking.requested_date_from}T${booking.start_time}`,
-        "YYYY-MM-DDTHH:mm"
-      );
-      const existingEnd = moment(
-        `${booking.requested_date_from}T${booking.end_time}`,
-        "YYYY-MM-DDTHH:mm"
-      );
-  
-      // Overlap conditions
-      return (
-        formData.requested_date_from === booking.requested_date_from && // Same day
-        (
-          (newStart.isBetween(existingStart, existingEnd, undefined, "[)")) || // New start overlaps
-          (newEnd.isBetween(existingStart, existingEnd, undefined, "(]")) || // New end overlaps
-          (newStart.isSameOrBefore(existingStart) && newEnd.isSameOrAfter(existingEnd)) // New fully encompasses existing
-        )
-      );
-    });
-  
-    if (isOverlapping) {
-      formErrors.overlap = "This booking overlaps with an existing one.";
-    }
-  
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
-  };
-  
-  
-
-  const handleSubmitWithValidation = async (e) => {
-    e.preventDefault(); // Prevent form submission default behavior
-  
-    if (validateForm()) {
-      try {
-        console.log("Submitting form data:", formData); // Debugging
-        const response = await axios.post("http://localhost:5000/calendar", formData);
-  
-        if (response.status === 201) {
-          alert("Booking added successfully!");
-          setShowForm(false); // Close form
-          setBookings((prev) => [...prev, response.data]); // Update bookings
-        } else {
-          alert("Failed to add booking.");
-        }
-      } catch (error) {
-        console.error("Error during submission:", error.response || error.message);
-        alert("An error occurred while submitting the form. Please try again.");
-      }
-    } else {
-      console.log("Form validation failed:", errors); // Debugging
-    }
-  };
-  
   
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-75">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg mx-4 md:mx-0 overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-70">
+      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg mx-4 md:mx-0 overflow-y-auto max-h-[90vh]"
+      style={{
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("/goldpaper.jpg")`, // Correctly references the image
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+      >
         <h2 className="text-2xl font-semibold mb-4 text-center">
           {formData.booking_id ? "Edit Booking" : "Create Booking"}
         </h2>
@@ -286,16 +201,17 @@ const BookingForm = ({
           </div>
 
           <div className="mt-6 flex justify-between">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition duration-200"
-            >
-              Cancel
-            </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded transition duration-200"
+              className="mt-4 bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-300"
             >
               Save Booking
             </button>
