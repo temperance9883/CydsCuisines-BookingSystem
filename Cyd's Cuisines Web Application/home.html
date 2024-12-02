@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cyd's Cuisines</title>
+        <link rel="stylesheet" href="styles.css" type="text/css">
+        <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
+        <style>
+            body 
+            {
+                font-family: Jacques Francois;
+                background-image:linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)), url('./Photos/background1.jpg');
+                background-size: 300%;
+                color: #A9B7A0; 
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 120px;
+            }
+            header
+            {
+                text-align: center;
+                padding: 1em;
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 0;
+                z-index: 1;
+            }
+            header h1 
+            {
+                margin: 0;
+                color: #A9B7A0;
+            }
+            header h2 
+            {
+                margin: 0;
+                color: #d4af37;
+                font-weight: normal;
+            }
+            .carousel-section 
+            {
+                width: 80%;
+                max-width: 600px;
+                margin: 2em auto;
+                overflow: hidden;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+            .carousel 
+            {
+                display: flex;
+                transition: transform 1s ease-in-out;
+                width: 170%;
+            }
+            .carousel img 
+            {
+                width: 20%;            
+                height: auto;           
+                object-fit: cover;      
+                border-radius: 10px;
+            }
+            .dashboard 
+            {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1em;
+                justify-content: center;
+                padding: 2em;
+                width: 80%;
+                max-width: 1000px;
+            }
+            .dashboard-item 
+            {
+                background-color: #fff5e1;
+                padding: 1.5em;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                width: calc(50% - 1em);
+                max-width: 400px;
+            }
+            .dashboard-item h3 
+            {
+                color: #d4af37;
+                margin-bottom: 0.5em;
+            }
+            .dashboard-item p 
+            {
+                color: #A9B7A0;
+            }
+            footer 
+            {
+                margin-top: 2em;
+                padding: 1em;
+                text-align: center;
+                width: 100%;
+                background-color: #f4f4f4;
+                color: #666;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Cyd's Cuisines</h1>
+            <h2>Booking Management Site</h2>
+        </header>
+        <section class="carousel-section">
+                <div class="carousel">
+                    <img src="./Photos/Couple.png" alt="Event Setup 1">
+                    <img src="./Photos/Cyd's photo 1.png" alt="Event Setup 2">
+                    <img src="./Photos/Cyd's photo.png" alt="Event Setup 3">
+                    <img src="./Photos/Cyd'sphoto.png" alt="Event Setup 4">
+                    <img src="./Photos/Food.png" alt="Event Setup 5">
+                </div>
+        </section>
+        <section class="dashboard">
+            <div class="dashboard-item">
+                <a href="client.html">
+                    <h3>Client Management</h3>
+                    <p>View and manage client profiles.</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a href="calendar.html">
+                    <h3>Event Calendar</h3>
+                    <p>Check and manage upcoming events.</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a href="bids.html">
+                    <h3>Bid Management</h3>
+                    <p>Review and manage bids.</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a href="support.html">
+                    <h3>Support</h3>
+                    <p>Contact support for assistance.</p>
+                </a>
+            </div>
+        </section>
+        <footer>
+            <p>© 2024 Cyd's Cuisines. All rights reserved.</p>
+        </footer>
+        <script>
+            const carousel = document.querySelector('.carousel');
+        let index = 0;
+        const totalImages = carousel.children.length;
+
+        function showNextImage() {
+            index = (index + 1) % totalImages;
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        setInterval(showNextImage, 2000); // Switch image every 10 seconds
+        </script>
+  </body>    
+</html>
